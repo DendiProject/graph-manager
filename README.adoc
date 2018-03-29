@@ -1,0 +1,12 @@
+image:https://travis-ci.org/DendiProject/graph-manager.svg?branch=master["Build Status", link="https://travis-ci.org/DendiProject/graph-manager"]
+
+:link-github-project-GM: https://dendiproject.github.io/graph-manager
+:link-github-project-ghpages: https://dendiproject.github.io/documentation
+:link-demo-html: {link-github-project-GM}/test.html
+:link-demo-pdf: {link-github-project-GM}/test.pdf
+
+
+** {link-github-project-ghpages}[*Link to Github Page*]
+** {link-github-project-GM}[Link to GM page]
+** {link-demo-html}[GM doc HTML]
+** {link-demo-pdf}[GM doc PDF]
