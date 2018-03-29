@@ -1,13 +1,7 @@
-package com.netckracker.content.manager;
+package com.netckracker.graph.manager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-/**
- * Hello world!
- *
- */
-
 
 
 @SpringBootApplication
