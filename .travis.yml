@@ -4,7 +4,7 @@ jdk:
 - oraclejdk8
 install:
   - mvn clean install
-script:s
+script:
   - mvn test jacoco:report
 after_success:
   - cd $TRAVIS_BUILD_DIR/target/generated-docs  ; mv README.html index.html ; cp -R ../doc doc
