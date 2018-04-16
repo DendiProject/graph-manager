@@ -31,5 +31,29 @@ public class Edges implements Serializable  {
     @ManyToOne
     @JoinColumn(name = "end_node_id")
     private Node endNode;
+
+    public String getEdgeId() {
+        return edgeId;
+    }
+
+    public void setEdgeId(String edgeId) {
+        this.edgeId = edgeId;
+    }
+
+    public Node getStartNode() {
+        return startNode;
+    }
+
+    public void setStartNode(Node startNode) {
+        this.startNode = startNode;
+    }
+
+    public Node getEndNode() {
+        return endNode;
+    }
+
+    public void setEndNode(Node endNode) {
+        this.endNode = endNode;
+    }
     
 }

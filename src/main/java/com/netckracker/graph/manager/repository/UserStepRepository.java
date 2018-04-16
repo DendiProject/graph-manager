@@ -5,7 +5,7 @@
  */
 package com.netckracker.graph.manager.repository;
 
-import com.netckracker.graph.manager.model.Catalog;
+import com.netckracker.graph.manager.model.UserStep;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author eliza
  */
 @Repository
-public interface CatalogRepository extends JpaRepository <Catalog, String>{
-    Catalog findByCatalogId(String catalogId);
-    Catalog findByName(String name);
+public interface UserStepRepository extends JpaRepository <UserStep, String>{
     
 }

@@ -33,9 +33,37 @@ public class ReceipeVersion implements Serializable {
     @Column(name = "is_main_version") 
     private boolean isMainVersion;
     
-    @Column(name = "number_of_people") 
-    private int numberOfPeople;
-    
-    
+
+    public String getVersionId() {
+        return versionId;
+    }
+
+    public void setVersionId(String versionId) {
+        this.versionId = versionId;
+    }
+
+    public Receipe getReceipe() {
+        return receipe;
+    }
+
+    public void setReceipe(Receipe receipe) {
+        this.receipe = receipe;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isIsMainVersion() {
+        return isMainVersion;
+    }
+
+    public void setIsMainVersion(boolean isMainVersion) {
+        this.isMainVersion = isMainVersion;
+    }  
     
 }

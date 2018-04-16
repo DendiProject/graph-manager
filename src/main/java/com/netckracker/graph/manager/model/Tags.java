@@ -23,11 +23,37 @@ public class Tags implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String tagId;
     
-    @ManyToOne
-    @JoinColumn(name = "receipe_id")
-    private Receipe receipe;
-    
     @Column(name = "name") 
     private String name;
+
+    public String getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    @Override
+    public int hashCode() {
+       int result=1;
+        result = 31 * result + (name!= null ? name.hashCode() : 0);
+        return result;
+    }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if ( !(obj instanceof Tags) ) return false;
+        final Tags tag = (Tags) obj;
+        if ( !tag.getName().equals(getName())) return false;
+        return true;
+    }
 }

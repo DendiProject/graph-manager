@@ -32,6 +32,50 @@ public class Resources implements Serializable {
     @Column(name = "user_id") 
     private String userId;
     
+    @Column(name = "picture_id") 
+    private String pictureId;
+    
     @Column(name = "ingredient_or_resource") 
     private String ingredientOrRsource;
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMeasuring() {
+        return measuring;
+    }
+
+    public void setMeasuring(String measuring) {
+        this.measuring = measuring;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getIngredientOrRsource() {
+        return ingredientOrRsource;
+    }
+
+    public void setIngredientOrRsource(String ingredientOrRsource) {
+        this.ingredientOrRsource = ingredientOrRsource;
+    }
+    
 }

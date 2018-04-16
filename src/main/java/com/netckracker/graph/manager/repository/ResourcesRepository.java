@@ -5,7 +5,8 @@
  */
 package com.netckracker.graph.manager.repository;
 
-import com.netckracker.graph.manager.model.Catalog;
+import com.netckracker.graph.manager.model.Resources;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +15,7 @@ import org.springframework.stereotype.Repository;
  * @author eliza
  */
 @Repository
-public interface CatalogRepository extends JpaRepository <Catalog, String>{
-    Catalog findByCatalogId(String catalogId);
-    Catalog findByName(String name);
-    
+public interface ResourcesRepository extends JpaRepository <Resources, String> {
+    Resources findByResourceId(String resourceId);
+    List<Resources> findFirst10ByNameStartingWith(String resourceName);
 }

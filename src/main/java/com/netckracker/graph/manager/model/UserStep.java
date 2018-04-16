@@ -28,12 +28,52 @@ public class UserStep {
     
     @ManyToOne
     @JoinColumn(name = "version_id")
-    private ReceipeVersion versionId;        
+    private ReceipeVersion version;        
     
     @Column(name = "user_id")
     private String userId;
     
     @Column(name = "is_completed") 
     private boolean isCompleted;
+
+    public String getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
+    }
+
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
+    public ReceipeVersion getVersion() {
+        return version;
+    }
+
+    public void setVersion(ReceipeVersion version) {
+        this.version = version;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isIsCompleted() {
+        return isCompleted;
+    }
+
+    public void setIsCompleted(boolean isCompleted) {
+        this.isCompleted = isCompleted;
+    }
     
 }

@@ -59,7 +59,6 @@ WITH (
 create table ReceipeVersion (
 version_id varchar(255) not null, 
 is_main_version boolean, 
-number_of_people integer, 
 user_id varchar(255), 
 receipe_id varchar(255), 
 CONSTRAINT version_pkey PRIMARY KEY (version_id)
@@ -72,7 +71,8 @@ resource_id varchar(255) not null,
 ingredient_or_resource varchar(255), 
 measuring varchar(255), 
 name varchar(255), 
-user_id varchar(255), 
+user_id varchar(255),
+picture_id varchar(255), 
 CONSTRAINT resources_pkey PRIMARY KEY (resource_id)
 )
 WITH (
@@ -80,8 +80,7 @@ WITH (
 );
 create table Tags (
 tag_id varchar(255) not null,
- name varchar(255), 
-receipe_id varchar(255), 
+ name varchar(255),  
 CONSTRAINT tag_pkey PRIMARY KEY (tag_id)
 )
 WITH (
@@ -105,8 +104,13 @@ alter table NodeResources add constraint FKsmj1pap8p9dcckopqiwcbbcvy foreign key
 alter table NodeResources add constraint FKfsetiemf0h8b40k0hachxq7fl foreign key (version_id) references ReceipeVersion;
 alter table Receipe add constraint FKdas5suiytegofttyi961i2bcw foreign key (catalog_id) references Catalog;
 alter table ReceipeVersion add constraint FKeokmd6bcfe5fgvvx4g8cbc50n foreign key (receipe_id) references Receipe;
-alter table Tags add constraint FKjeu3btdqlodjgsgw09f2jmnp8 foreign key (receipe_id) references Receipe;
 alter table Edges add constraint FKbhrkb857l3ovgv0134skfi9nf foreign key (end_node_id) references Node;
 alter table Edges add constraint FKjq0a1a85w4edxbrdgmo392ey7 foreign key (start_node_id) references Node;
 alter table UserStep add constraint FK4yj9gl2grk3pasi0j4a21s2q3 foreign key (version_id) references ReceipeVersion;
 alter table UserStep add constraint FKt69hxm5viytprnfpfovcxwr7c foreign key (version_id) references Node;
+
+CREATE TABLE Receipe_tagList 
+    (Receipe_receipe_id varchar(255) not null, 
+    tagList_tag_id varchar(255) not null);
+alter table Receipe_tagList add constraint FK9g52vxo4gnsilfckxug56tgt9 foreign key (tagList_tag_id) references Tags;
+alter table Receipe_tagList add constraint FKgfgd00q37nwo8s5opbgjjiv8e foreign key (Receipe_receipe_id) references Receipe;
