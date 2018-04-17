@@ -7,6 +7,8 @@ package com.netckracker.graph.manager.repository;
 
 import com.netckracker.graph.manager.model.Tags;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,5 +20,5 @@ import org.springframework.stereotype.Repository;
 public interface TagsRepository extends JpaRepository <Tags, String> {
     Tags findByTagId(String tagId);
     Tags findByName(String tagName);
-    List<Tags> findFirst10ByNameStartingWith(String tagName);
+    Page <Tags> findFirst10ByNameStartingWith(String tagName, Pageable pageable);
 }

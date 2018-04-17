@@ -65,7 +65,8 @@ public class NodeServiceImpl implements NodeService{
     }
 
     @Override
-    public String createEdge(String startNodeId, String endNodeId, String receipeId, String userId) {
+    @Transactional
+    public Edges createEdge(String startNodeId, String endNodeId, String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
         ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
         Node startNode=nodeRepository.findByNodeIdAndVersion(startNodeId, version);
@@ -74,14 +75,22 @@ public class NodeServiceImpl implements NodeService{
         edge.setStartNode(startNode);
         edge.setEndNode(endNode);
         Edges saved=edgesRepository.save(edge);
-        return saved.getEdgeId();
+        return saved;
     }
 
     @Override
-    public void addInputResourcesToNode(String receipeId, String userId, String nodeId, List<Resources> resources, double resourceNumber) {
+    @Transactional
+    public void addInputOrOutputResourcesToNode(String receipeId, String userId, String nodeId, List<ResourceDto> resources, String inputOrOutput) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
         ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
         Node node=nodeRepository.findByNodeIdAndVersion(nodeId, version);
-         }
-    
+        for (int i=0; i<resources.size(); i++)
+        {
+            NodeResources nodeResource=new NodeResources();
+            Resources resource=resourcesRepository.findByResourceId(resources.get(i).getResourceId());
+            nodeResource.setInputOrOutput(inputOrOutput);
+            nodeResource.setNode(node);
+            nodeResource.setNumberOfResource(resources.get(i).getResourceNumber());
+        }        
+   }    
 }

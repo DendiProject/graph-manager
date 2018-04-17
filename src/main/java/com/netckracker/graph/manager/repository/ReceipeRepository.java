@@ -5,6 +5,7 @@
  */
 package com.netckracker.graph.manager.repository;
 
+import com.netckracker.graph.manager.model.Catalog;
 import com.netckracker.graph.manager.model.Receipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,4 +33,5 @@ public interface ReceipeRepository extends JpaRepository <Receipe, String>{
     Page<Receipe> findByTag(@Param("tagid") String tagId, Pageable pageable);
     
     Page<Receipe> findByIsPublicAndIsCompleted(boolean isPublic, boolean isCompleted, Pageable pageable);
+    Page<Receipe> findByIsPublicAndIsCompletedAndCatalog(boolean isPublic, boolean isCompleted, Catalog catalog, Pageable pageable);
 }

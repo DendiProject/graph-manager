@@ -36,7 +36,7 @@ public class NodeResources implements Serializable {
     private ReceipeVersion version;
     
     @Column (name="number_of_resource")
-    private String numberOfResource;
+    private double numberOfResource;
     
     @Column (name="input_or_output")
     private String inputOrOutput;
@@ -73,11 +73,11 @@ public class NodeResources implements Serializable {
         this.version = version;
     }
 
-    public String getNumberOfResource() {
+    public double getNumberOfResource() {
         return numberOfResource;
     }
 
-    public void setNumberOfResource(String numberOfResource) {
+    public void setNumberOfResource(double numberOfResource) {
         this.numberOfResource = numberOfResource;
     }
 

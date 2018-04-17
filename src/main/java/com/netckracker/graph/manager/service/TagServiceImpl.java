@@ -65,8 +65,8 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public List<TagsDto> findByFirstLetters(String letters) {
-        List<Tags> tags=tagRepository.findFirst10ByNameStartingWith(letters);
+    public List<TagsDto> findByFirstLetters(String letters, int page, int size) {
+        List<Tags> tags=tagRepository.findFirst10ByNameStartingWith(letters, new PageRequest(page, size)).getContent();
         return tags.stream()
                .map(tag->convertor.convertTagsToDto(tag))
                .collect(Collectors.toList());

@@ -5,6 +5,8 @@
  */
 package com.netckracker.graph.manager.service;
 
+import com.netckracker.graph.manager.model.Catalog;
+
 /**
  *
  * @author eliza
@@ -12,4 +14,5 @@ package com.netckracker.graph.manager.service;
 public interface CatalogService {
     public String createCatalog (String name, String description);
     public String findCatalog(String name);
+    public Catalog getCatalogById(String catalogId);
 }

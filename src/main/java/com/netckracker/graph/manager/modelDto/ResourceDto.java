@@ -11,17 +11,25 @@ package com.netckracker.graph.manager.modelDto;
  */
 public class ResourceDto {
     
-    private String nodeResourceId;
-    private String name;
-    private String numberOfResource;
-    private String inputOrOutput;
+    private String resourceId;
+    private double resourceNumber;
 
-    public String getName() {
-        return name;
+    public String getResourceId() {
+        return resourceId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public double getResourceNumber() {
+        return resourceNumber;
+    }
+
+    public void setResourceNumber(double resourceNumber) {
+        this.resourceNumber = resourceNumber;
     }
     
+
+   
 }

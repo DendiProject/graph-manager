@@ -13,6 +13,7 @@ import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.ReceipeVersion;
 import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
+import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.repository.CatalogRepository;
 import com.netckracker.graph.manager.repository.NodeResourcesRepository;
 import com.netckracker.graph.manager.repository.ReceipeRepository;
@@ -65,8 +66,8 @@ public class ReceipeServiceImpl implements ReceipeService{
 
     @Override
     @Transactional
-    public String createReceipe(String name, String description, String catalog_id, 
-            String userId, boolean is_public, int numberOfPeople) {
+    public ReceipeDto createReceipe(String name, String description, String catalog_id, 
+            String userId, boolean is_public) {
         Receipe receipe=new Receipe();
         receipe.setName(name);
         receipe.setDescription(description);
@@ -84,15 +85,13 @@ public class ReceipeServiceImpl implements ReceipeService{
         version.setReceipe(saved);
         versionRepository.save(version);
                 
-        return saved.getReceipeId();
+        return convertor.convertReceipeToDto(saved);
         
     }
 
-    
-
     @Override
     @Transactional
-    public String addReceipeResources(String receipeId,String userId, String resourceId, String resourceNumber) {
+    public String addReceipeResources(String receipeId,String userId, String resourceId, double resourceNumber) {
         
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
         ReceipeVersion version=versionRepository.findByReceipeAndUserId(receipe, userId);
@@ -109,6 +108,21 @@ public class ReceipeServiceImpl implements ReceipeService{
     public List<ReceipeDto> getPublicCompletedReceipes(int page, int size) {
         
         List<Receipe> receipes=receipeRepository.findByIsPublicAndIsCompleted(true, true,new PageRequest(page, size)).getContent();
+            return receipes.stream()
+               .map(receipe->convertor.convertReceipeToDto(receipe))
+               .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReceipeInformationDto getReceipeInformation(String receipeId) {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        return convertor.convertReceipeToReceipeInformationDto(receipe);
+    }
+
+    @Override
+    public List<ReceipeDto> getReceipesByCatalog(String catalogId, int page, int size) {
+        Catalog catalog=catalogRepository.findByCatalogId(catalogId);
+        List<Receipe> receipes=receipeRepository.findByIsPublicAndIsCompletedAndCatalog(true, true, catalog,new PageRequest(page, size)).getContent();
             return receipes.stream()
                .map(receipe->convertor.convertReceipeToDto(receipe))
                .collect(Collectors.toList());

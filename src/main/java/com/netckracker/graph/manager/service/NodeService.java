@@ -5,6 +5,7 @@
  */
 package com.netckracker.graph.manager.service;
 
+import com.netckracker.graph.manager.model.Edges;
 import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import java.util.List;
@@ -15,6 +16,6 @@ import java.util.List;
  */
 public interface NodeService {
     public String createNode(String receipeId, String userId);
-    public String createEdge(String startNodeIs, String endNodeId, String receipeId, String userId);
-    public void addInputResourcesToNode(String receipeId, String userId,String nodeId,List<Resources> resources, double resourceNumber );
+    public Edges createEdge(String startNodeIs, String endNodeId, String receipeId, String userId);
+    public void addInputOrOutputResourcesToNode(String receipeId, String userId, String nodeId, List<ResourceDto> resources , String inputOrOutput);
 }

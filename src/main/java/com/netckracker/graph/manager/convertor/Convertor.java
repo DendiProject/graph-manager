@@ -9,8 +9,11 @@ import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.model.Tags;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
+import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
+import com.netckracker.graph.manager.modelDto.ResourceNameDto;
 import com.netckracker.graph.manager.modelDto.TagsDto;
+import com.netckracker.graph.manager.repository.ResourcesRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,7 +25,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Convertor {
     @Autowired
-private ModelMapper modelMapper;
+    private ModelMapper modelMapper;
+    @Autowired
+    private ResourcesRepository resourcesRepository;
     
     public ReceipeDto convertReceipeToDto(Receipe receipe)
     {
@@ -35,13 +40,22 @@ private ModelMapper modelMapper;
         ResourceDto resourceDto=modelMapper.map(resource, ResourceDto.class);
         return resourceDto;
     }
+    
+    public ResourceNameDto convertResourceToResourceNameDto(Resources resource)
+    {
+        ResourceNameDto resourceDto=modelMapper.map(resource, ResourceNameDto.class);
+        return resourceDto;
+    }
+    
     public TagsDto convertTagsToDto(Tags tag)
     {
         TagsDto tagsDto=modelMapper.map(tag, TagsDto.class);
         return tagsDto;
     }
-    public Resources convertDtoToEntity(ResourceDto resourceDto)
+
+    public ReceipeInformationDto convertReceipeToReceipeInformationDto(Receipe receipe)
     {
-        return modelMapper.map(resourceDto, Resources.class);
+        ReceipeInformationDto receipeInformationDto=modelMapper.map(receipe, ReceipeInformationDto.class);
+        return receipeInformationDto;
     }
 }

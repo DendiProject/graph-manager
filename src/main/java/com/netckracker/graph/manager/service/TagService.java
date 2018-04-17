@@ -16,6 +16,6 @@ import java.util.List;
 public interface TagService {
     public void addTag(String receipeId, String tagName);
     public List<ReceipeDto> findByTag(String tagName, int page, int size);
-    public List<TagsDto> findByFirstLetters(String letters);
+    public List<TagsDto> findByFirstLetters(String letters, int page, int size);
     
 }
