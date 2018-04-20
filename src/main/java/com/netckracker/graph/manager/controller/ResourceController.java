@@ -30,7 +30,8 @@ public class ResourceController {
     
     @RequestMapping(value = "/resource/getbyfirstletters/{letters}", params = { "page", "size" },method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public  ResponseEntity<?> getResourcesByLetters(@PathVariable  String  letters, @RequestParam( "page" ) int page, @RequestParam( "size" ) int size ){
+    public  ResponseEntity<?> getResourcesByLetters(@PathVariable  String  letters, @RequestParam String ingredientOrResource,
+            @RequestParam( "page" ) int page, @RequestParam( "size" ) int size ){
         
         if (size==0&&page==0)
         {
@@ -38,7 +39,7 @@ public class ResourceController {
             size=6;
         }
         
-        List<ResourceNameDto> receipes=resourceService.findByFirstLetters(letters, page, size);
+        List<ResourceNameDto> receipes=resourceService.findByFirstLetters(letters, ingredientOrResource,page, size);
         if (receipes.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -47,26 +48,19 @@ public class ResourceController {
         }
     }
     
-     @RequestMapping(value = "/resource/getbyname/{name}", method = RequestMethod.GET, 
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> getResourceByName(@PathVariable String name){
-        String resourceId=resourceService.getResourceIdByName(name);
-     return new ResponseEntity<>(resourceId, HttpStatus.OK);
-    }
-    
     @RequestMapping(value = "/resource/addresource", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> addResource(@RequestParam String name, @RequestParam String resourceOrIngredient, 
+    public ResponseEntity<String> addResource(@RequestParam String name, @RequestParam String ingredientOrResource, 
             @RequestParam String measuring, @RequestParam String userId, @RequestParam String pictureId){
-         String resourceId=resourceService.createResource(name, userId, measuring, resourceOrIngredient, pictureId);
+         String resourceId=resourceService.createResource(name, userId, measuring, ingredientOrResource, pictureId);
      return new ResponseEntity<>(resourceId, HttpStatus.OK);
     }
     
     @RequestMapping(value = "/resource/addnoderesource", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> addNodeResource(@RequestParam String name, @RequestParam String resourceOrIngredient, 
+    public ResponseEntity<String> addNodeResource(@RequestParam String name, @RequestParam String ingredientOrResource, 
             @RequestParam String measuring, @RequestParam String nodeId){
-         String resourceId=resourceService.createNodeResource(name, nodeId, measuring, resourceOrIngredient);
+         String resourceId=resourceService.createNodeResource(name, nodeId, measuring, ingredientOrResource);
      return new ResponseEntity<>(resourceId, HttpStatus.OK);
     }
     

@@ -12,17 +12,12 @@ package com.netckracker.graph.manager.modelDto;
  * @author eliza
  */
 public class ReceipeInformationDto {
-
-    private String name;
-    
-    private String description;
-    
-    private boolean isPublic;
-   
-    private boolean isCompleted;
-    
-    private boolean isDeleted;
-    
+    private String receipeId;
+    private String name;    
+    private String description;    
+    private boolean isPublic;   
+    private boolean isCompleted;    
+    private boolean isDeleted;    
     private String pictureId;
 
     public String getName() {
@@ -71,6 +66,14 @@ public class ReceipeInformationDto {
 
     public void setPictureId(String pictureId) {
         this.pictureId = pictureId;
+    }
+
+    public String getReceipeId() {
+        return receipeId;
+    }
+
+    public void setReceipeId(String receipeId) {
+        this.receipeId = receipeId;
     }
     
     

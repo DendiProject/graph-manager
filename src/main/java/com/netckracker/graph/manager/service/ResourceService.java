@@ -15,10 +15,9 @@ import java.util.List;
  */
 public interface ResourceService {
     public String createResource(String resourceName, String userId,
-            String measuring, String resourceOrIngredient,String pictureId);
-    public List<ResourceNameDto> findByFirstLetters(String letters,  int page, int size);
+            String measuring, String ingredientOrResource,String pictureId);
+    public List<ResourceNameDto> findByFirstLetters(String letters,String ingredientOrResource,  int page, int size);
     public String createNodeResource(String resourceName, String nodeId,
-            String measuring, String resourceOrIngredient);
-    public String getResourceIdByName(String resourceName);
+            String measuring, String ingredientOrResource);
 }
 

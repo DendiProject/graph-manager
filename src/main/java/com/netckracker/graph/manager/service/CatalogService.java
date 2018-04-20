@@ -13,6 +13,5 @@ import com.netckracker.graph.manager.model.Catalog;
  */
 public interface CatalogService {
     public String createCatalog (String name, String description);
-    public String findCatalog(String name);
-    public Catalog getCatalogById(String catalogId);
+    public Catalog findCatalog(String name);
 }

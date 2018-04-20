@@ -32,12 +32,33 @@ public class Resources implements Serializable {
     @Column(name = "user_id") 
     private String userId;
     
+    @ManyToOne
+    @JoinColumn(name = "node_id")
+    private Node node;
+    
     @Column(name = "picture_id") 
     private String pictureId;
     
     @Column(name = "ingredient_or_resource") 
-    private String ingredientOrRsource;
+    private String ingredientResource;
 
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
+
+    public String getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(String pictureId) {
+        this.pictureId = pictureId;
+    }
+
+    
     public String getResourceId() {
         return resourceId;
     }
@@ -70,12 +91,12 @@ public class Resources implements Serializable {
         this.userId = userId;
     }
 
-    public String getIngredientOrRsource() {
-        return ingredientOrRsource;
+    public String getIngredientOrResource() {
+        return ingredientResource;
     }
 
-    public void setIngredientOrRsource(String ingredientOrRsource) {
-        this.ingredientOrRsource = ingredientOrRsource;
+    public void setIngredientOrResource(String ingredientOrResource) {
+        this.ingredientResource = ingredientOrResource;
     }
     
 }

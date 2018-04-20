@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,19 +34,24 @@ public class NodeController {
         String nodeId=nodeService.createNode(receipeId, userId);
      return new ResponseEntity<>(nodeId, HttpStatus.OK);
     }
-    @RequestMapping(value = "/node/addegde", method = RequestMethod.POST, 
+    @RequestMapping(value = "/node/addnodedescription/{nodeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<?> addEdge(@RequestParam String receipeId, @RequestParam String userId,
-            @RequestParam String startNodeId, @RequestParam String endNodeId){
-        Edges edge=nodeService.createEdge(startNodeId, endNodeId, receipeId, userId);
-     return new ResponseEntity<>(edge, HttpStatus.OK);
+    public ResponseEntity<String> addNodeDescription(@PathVariable String nodeId, @RequestParam String description){
+        nodeService.addNodeDescription(nodeId, description);
+     return new ResponseEntity<>(HttpStatus.OK);
     }
-    @RequestMapping(value = "/node/addresources", method = RequestMethod.POST, 
+    @RequestMapping(value = "/node/addedge", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<Void> addResources(@RequestParam String receipeId, @RequestParam String userId,
-            @RequestParam List<ResourceDto> resources, @RequestParam String nodeId,@RequestParam String InputOrOutputResources ){
-        nodeService.addInputOrOutputResourcesToNode(receipeId, userId, nodeId, resources, InputOrOutputResources);
-     return new ResponseEntity<>( HttpStatus.OK);
+    public ResponseEntity<Void> addEdge(@RequestParam String startNodeId, @RequestParam String endNodeId){
+        nodeService.createEdge(startNodeId, endNodeId);
+     return new ResponseEntity<> (HttpStatus.OK);
+    }
+    @RequestMapping(value = "/node/addresources/{nodeId}", method = RequestMethod.POST, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<?> addResources(@PathVariable String nodeId, @RequestParam List<ResourceDto> resources/*, 
+            @RequestParam String InputOrOutputResources */){
+       // nodeService.addInputOrOutputResourcesToNode(nodeId,/* resources,*/ InputOrOutputResources);
+     return new ResponseEntity<>( "sucsess",HttpStatus.OK);
     }
     
     

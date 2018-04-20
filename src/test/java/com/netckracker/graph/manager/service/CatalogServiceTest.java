@@ -5,6 +5,7 @@
  */
 package com.netckracker.graph.manager.service;
 
+import com.netckracker.graph.manager.model.Catalog;
 import com.netckracker.graph.manager.repository.CatalogRepository;
 import javax.transaction.Transactional;
 import static org.junit.Assert.assertEquals;
@@ -38,8 +39,9 @@ public class CatalogServiceTest {
     public void findCatalogTest()
     {
         String catalogId=catalogService.createCatalog("catalog", "description");
-        String findedCatalogId=catalogService.findCatalog("catalog");
-        assertEquals("catalog incorrect", catalogId, findedCatalogId);      
+        Catalog finded=catalogService.findCatalog("catalog");
+        assertEquals("catalog incorrect", catalogId, finded.getCatalogId());      
     }
     
+
 }

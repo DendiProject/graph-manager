@@ -34,19 +34,20 @@ public class ResourceServiceImpl implements ResourceService{
 
     @Override
     @Transactional
-    public String createResource(String resourceName, String userId, String measuring, String resourceOrIngredient, String pictureId) {
+    public String createResource(String resourceName, String userId, String measuring, String ingredientOrResource, String pictureId) {
         Resources resource=new Resources();
         resource.setName(resourceName);
-        resource.setIngredientOrRsource(resourceOrIngredient);
+        resource.setIngredientOrResource(ingredientOrResource);
         resource.setMeasuring(measuring);
         resource.setUserId(userId);
+        resource.setPictureId(pictureId);
         Resources saved=resourcesRepository.save(resource);
         return saved.getResourceId();
     }
 
     @Override
-    public List<ResourceNameDto> findByFirstLetters(String letters,  int page, int size) {
-        List<Resources> resources=resourcesRepository.findFirst10ByNameStartingWith(letters,new PageRequest(page, size)).getContent();
+    public List<ResourceNameDto> findByFirstLetters(String letters, String ingredientOrResource, int page, int size) {
+        List<Resources> resources=resourcesRepository.findFirst10ByIngredientResourceAndNameStartingWith(ingredientOrResource,letters,new PageRequest(page, size)).getContent();
         return resources.stream()
                .map(resource->convertor.convertResourceToResourceNameDto(resource))
                .collect(Collectors.toList());
@@ -57,15 +58,13 @@ public class ResourceServiceImpl implements ResourceService{
         Resources resource=new Resources();
         resource.setName(resourceName);
         resource.setMeasuring(measuring);       
-        resource.setIngredientOrRsource(resourceOrIngredient);
+        resource.setIngredientOrResource(resourceOrIngredient);
+        Node node=nodeRepository.findByNodeId(nodeId);
+        resource.setNode(node);
         Resources saved=resourcesRepository.save(resource);
         return saved.getResourceId();
     }
 
-    @Override
-    public String getResourceIdByName(String resourceName) {
-        Resources resource=resourcesRepository.findByName(resourceName);
-        return resource.getResourceId();
-    }
+    
     
 }

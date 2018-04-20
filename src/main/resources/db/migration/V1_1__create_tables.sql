@@ -72,6 +72,7 @@ ingredient_or_resource varchar(255),
 measuring varchar(255), 
 name varchar(255), 
 user_id varchar(255),
+node_id varchar(255),
 picture_id varchar(255), 
 CONSTRAINT resources_pkey PRIMARY KEY (resource_id)
 )
@@ -107,7 +108,8 @@ alter table ReceipeVersion add constraint FKeokmd6bcfe5fgvvx4g8cbc50n foreign ke
 alter table Edges add constraint FKbhrkb857l3ovgv0134skfi9nf foreign key (end_node_id) references Node;
 alter table Edges add constraint FKjq0a1a85w4edxbrdgmo392ey7 foreign key (start_node_id) references Node;
 alter table UserStep add constraint FK4yj9gl2grk3pasi0j4a21s2q3 foreign key (version_id) references ReceipeVersion;
-alter table UserStep add constraint FKt69hxm5viytprnfpfovcxwr7c foreign key (version_id) references Node;
+alter table UserStep add constraint FKt69hxm5viytprnfpfovcxwr7c foreign key (node_id) references Node;
+alter table Resources add constraint nodeIdFK foreign key (node_id) references Node;
 
 CREATE TABLE Receipe_tagList 
     (Receipe_receipe_id varchar(255) not null, 

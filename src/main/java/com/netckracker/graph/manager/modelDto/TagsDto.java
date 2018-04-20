@@ -10,6 +10,7 @@ package com.netckracker.graph.manager.modelDto;
  * @author eliza
  */
 public class TagsDto {
+    
     private String name;
 
     public String getName() {

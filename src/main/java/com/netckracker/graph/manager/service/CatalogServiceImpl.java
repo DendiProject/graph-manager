@@ -36,24 +36,12 @@ public class CatalogServiceImpl implements CatalogService{
     }
 
     @Override
-    public String findCatalog(String name) {
+    public Catalog findCatalog(String name) {
         Catalog find=catalogRepository.findByName(name);
-        if (find!=null)
-        {
-            return find.getCatalogId();
-        }
-        else return null;
-    }
-
-    @Override
-    public Catalog getCatalogById(String catalogId) {
-        Catalog find=catalogRepository.findByCatalogId(catalogId);
         if (find!=null)
         {
             return find;
         }
         else return null;
-    }
-    
-    
+    }   
 }

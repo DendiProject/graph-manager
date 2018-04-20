@@ -8,6 +8,7 @@ package com.netckracker.graph.manager.convertor;
 import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.model.Tags;
+import com.netckracker.graph.manager.modelDto.CatalogDto;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
@@ -58,4 +59,10 @@ public class Convertor {
         ReceipeInformationDto receipeInformationDto=modelMapper.map(receipe, ReceipeInformationDto.class);
         return receipeInformationDto;
     }
+    
+ /*   public CatalogDto convertCatalogToDto(Catalog catalog)
+    {
+        TagsDto tagsDto=modelMapper.map(tag, TagsDto.class);
+        return tagsDto;
+    }*/
 }

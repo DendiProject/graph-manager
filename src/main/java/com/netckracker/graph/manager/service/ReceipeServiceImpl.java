@@ -66,15 +66,15 @@ public class ReceipeServiceImpl implements ReceipeService{
 
     @Override
     @Transactional
-    public ReceipeDto createReceipe(String name, String description, String catalog_id, 
-            String userId, boolean is_public) {
+    public ReceipeDto createReceipe(String name, String description, String catalogId, 
+            String userId, boolean isPublic) {
         Receipe receipe=new Receipe();
         receipe.setName(name);
         receipe.setDescription(description);
         receipe.setIsCompleted(false);
-        receipe.setIsPublic(false);
+        receipe.setIsPublic(isPublic);
         receipe.setIsDeleted(false);
-        Catalog find=catalogRepository.findByCatalogId(catalog_id);
+        Catalog find=catalogRepository.findByCatalogId(catalogId);
         receipe.setCatalog(find);
         Receipe saved=receipeRepository.save(receipe);
         
@@ -116,6 +116,7 @@ public class ReceipeServiceImpl implements ReceipeService{
     @Override
     public ReceipeInformationDto getReceipeInformation(String receipeId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+    
         return convertor.convertReceipeToReceipeInformationDto(receipe);
     }
 
@@ -126,6 +127,13 @@ public class ReceipeServiceImpl implements ReceipeService{
             return receipes.stream()
                .map(receipe->convertor.convertReceipeToDto(receipe))
                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setCompleted(String receipeId) {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        receipe.setIsCompleted(true);
+        receipeRepository.save(receipe);
     }
     
 }

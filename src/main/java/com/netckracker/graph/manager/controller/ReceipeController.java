@@ -31,35 +31,47 @@ public class ReceipeController {
     @RequestMapping(value = "/receipe/addreceipe", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<ReceipeDto> addReceipe(@RequestParam String name, @RequestParam String description, 
-            @RequestParam String catalogId, @RequestParam String userId, @RequestParam boolean is_public){
-        ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, is_public);
+            @RequestParam String catalogId, @RequestParam String userId, @RequestParam boolean isPublic ){
+        ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, isPublic);
      return new ResponseEntity<>(receipe, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/receipe/getreceipeinfo/{receipeid}", method = RequestMethod.GET, 
+    @RequestMapping(value = "/receipe/getreceipeinfo/{receipeId}", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<ReceipeInformationDto> getReceipeInfo(@PathVariable String receipeId){
+    public ResponseEntity<ReceipeInformationDto> getReceipeInfo(@PathVariable   String receipeId){
         ReceipeInformationDto receipe=receipeService.getReceipeInformation(receipeId);
-     return new ResponseEntity<>(receipe, HttpStatus.OK);
+        if (receipe==null)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else return new ResponseEntity<>(receipe, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/receipe/setcompleted/{receipeId}", method = RequestMethod.POST, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<Void> setReceipeCompleted(@PathVariable   String receipeId){
+        receipeService.setCompleted(receipeId);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
     
     @RequestMapping(value = "/receipe/delete/{receipeId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteNode(@PathVariable String receipeId, @RequestParam String userId) throws InterruptedException{
+    public ResponseEntity<Void> deleteNode(@PathVariable ("receipeId") String receipeId, @RequestParam String userId) throws InterruptedException{
        receipeService.deleteReceipe(receipeId, userId);
        return new ResponseEntity<>(HttpStatus.OK);
     }
     
-     @RequestMapping(value = "/receipe/addreceiperesource", method = RequestMethod.POST, 
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> addReceipeResource(@RequestParam String receipeId, @RequestParam String userId, @RequestParam String resourceId, 
-            @RequestParam double resourceNumber){
-        String receipeResource=receipeService.addReceipeResources(receipeId, userId, resourceId, resourceNumber);
-     return new ResponseEntity<>(receipeResource, HttpStatus.OK);
-    }
+ 
     
+    @RequestMapping(value = "/receipe/addreceiperesources/{receipeId}", method = RequestMethod.POST, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<?> addReceipeResource(@PathVariable ("receipeId") String receipeId, 
+            @RequestParam("userId")  String userId, @RequestParam ("resourceId") String resourceId){
+       //  String receipeResource=receipeService.addReceipeResources(receipeId, userId, resourceId, 0);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @RequestMapping(value = "/receipe/getpublicandcompleted", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<?> getPublicAndCompletesReceipes( @RequestParam( "page" ) int page, @RequestParam( "size" ) int size){
+    public ResponseEntity<?> getPublicAndCompletesReceipes( @RequestParam int page, @RequestParam  int size){
         if (size==0&&page==0)
         {
             page=0;
@@ -76,7 +88,7 @@ public class ReceipeController {
     
     @RequestMapping(value = "/receipe/getbycatalog/{catalogId}", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<?> getPublicAndCompletesReceipesByCatalogId(@PathVariable String catalogId,
+    public ResponseEntity<?> getPublicAndCompletesReceipesByCatalogId(@PathVariable  String catalogId,
             @RequestParam( "page" ) int page, @RequestParam( "size" ) int size){
         if (size==0&&page==0)
         {

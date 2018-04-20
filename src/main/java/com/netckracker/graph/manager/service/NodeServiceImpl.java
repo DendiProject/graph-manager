@@ -66,31 +66,39 @@ public class NodeServiceImpl implements NodeService{
 
     @Override
     @Transactional
-    public Edges createEdge(String startNodeId, String endNodeId, String receipeId, String userId) {
-        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
-        Node startNode=nodeRepository.findByNodeIdAndVersion(startNodeId, version);
-        Node endNode=nodeRepository.findByNodeIdAndVersion(endNodeId, version);
+    public void createEdge(String startNodeId, String endNodeId) {
+        Node startNode=nodeRepository.findByNodeId(startNodeId);
+        Node endNode=nodeRepository.findByNodeId(endNodeId);
         Edges edge=new Edges();
         edge.setStartNode(startNode);
         edge.setEndNode(endNode);
-        Edges saved=edgesRepository.save(edge);
-        return saved;
+        edgesRepository.save(edge);
     }
 
     @Override
     @Transactional
-    public void addInputOrOutputResourcesToNode(String receipeId, String userId, String nodeId, List<ResourceDto> resources, String inputOrOutput) {
-        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
-        Node node=nodeRepository.findByNodeIdAndVersion(nodeId, version);
-        for (int i=0; i<resources.size(); i++)
+    public void addInputOrOutputResourcesToNode(String nodeId/* List<ResourceDto> resources*/, String inputOrOutput) {
+        
+        Node node=nodeRepository.findByNodeId(nodeId);
+        
+       /* for (int i=0; i<resources.size(); i++)
         {
             NodeResources nodeResource=new NodeResources();
             Resources resource=resourcesRepository.findByResourceId(resources.get(i).getResourceId());
             nodeResource.setInputOrOutput(inputOrOutput);
             nodeResource.setNode(node);
             nodeResource.setNumberOfResource(resources.get(i).getResourceNumber());
-        }        
+        }     */   
    }    
+
+    
+
+    @Override
+    public void addNodeDescription(String nodeId, String description) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        node.setDescription(description);
+        nodeRepository.save(node);
+    }
+
+    
 }

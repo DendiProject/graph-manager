@@ -33,29 +33,16 @@ public class CatalogController {
      return new ResponseEntity<>(catalogId, HttpStatus.OK);
     }
     
-    @RequestMapping(value = "/catalog/get/{catalogId}", method = RequestMethod.GET,
+    @RequestMapping(value = "/catalog/getbyname/{catalogName}", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<Catalog> getCatalogById(@PathVariable String catalogeId)  {
-        Catalog catalog=catalogService.getCatalogById(catalogeId);
-        
-        if (catalog == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        else{             
-            return new ResponseEntity<>(catalog, HttpStatus.OK);
-        }
-    }
-    @RequestMapping(value = "/catalog/getByName/{catalogName}", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> getCatalogByName(@PathVariable String catalogeName)  {
-        String catalogId=catalogService.findCatalog(catalogeName);
-        
-       if (catalogId == null){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-       }
-        else{                         
-            return new ResponseEntity<>(catalogId, HttpStatus.OK);
-            }
-    }
+    public ResponseEntity<Catalog> getCatalogByName(@PathVariable ("catalogName") String catalogeName)  {
+        Catalog catalog=catalogService.findCatalog(catalogeName); 
     
+        if (catalog==null)
+        {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+         else   return new ResponseEntity<>(catalog, HttpStatus.OK);
+            
+    }    
 }

@@ -5,6 +5,8 @@
  */
 package com.netckracker.graph.manager.controller;
 
+import com.netckracker.graph.manager.model.Catalog;
+import com.netckracker.graph.manager.repository.CatalogRepository;
 import com.netckracker.graph.manager.service.CatalogService;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -39,6 +41,8 @@ public class CatalogControllerTest {
     @Autowired
     private CatalogService catalogService;
     @Autowired
+    private CatalogRepository catalogRepository;
+    @Autowired
     private WebApplicationContext wac;
     
     @Before
@@ -56,24 +60,22 @@ public class CatalogControllerTest {
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
       MvcResult  result = mockMvc.perform(request).andReturn(); 
-      assertEquals("catalog incorrecrt", catalogService.findCatalog("deserts"), result.getResponse().getContentAsString());
+      assertEquals("catalog incorrecrt", catalogService.findCatalog("deserts").getCatalogId(), result.getResponse().getContentAsString());
     
     }
     
     @Test
-    public void getCatalogByNameTest() throws Exception
+    public void findCatalogByNameTest() throws Exception 
     {
-        /*String catalogId=catalogService.createCatalog("cackes", "description");
+        String catalogId=catalogService.createCatalog("cackes", "description");
+        Catalog catalog=catalogRepository.findByCatalogId(catalogId);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/catalog/getByName/cackes");
+                .get("/catalog/getbyname/cackes");
         request.accept(MediaType.APPLICATION_JSON);
-        request.contentType(MediaType.APPLICATION_JSON);
-       ResultActions result = mockMvc.perform(request)
-                .andExpect(MockMvcResultMatchers.status().isOk());
-       
-       MvcResult  result = mockMvc.perform(request).andReturn();  
-       System.out.println(result.getResponse().getContentAsString());
-       assertEquals("catalog incorrect", catalogId, result.getResponse().getContentAsString());*/
+        request.contentType(MediaType.APPLICATION_JSON);     
+      MvcResult  result = mockMvc.perform(request).andReturn();  
+     JSONAssert.assertEquals("{catalogId:"+catalog.getCatalogId()+",name:"+catalog.getName()+",description:"+catalog.getDescription()+"}", 
+             result.getResponse().getContentAsString(), false);
         
     }
     

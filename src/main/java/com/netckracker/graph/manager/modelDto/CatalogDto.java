@@ -9,9 +9,18 @@ package com.netckracker.graph.manager.modelDto;
  *
  * @author eliza
  */
-public class ResourceNameDto {
-    private String resourceId;
+public class CatalogDto {
+    private String catalogId;
     private String name;
+    private String description;
+
+    public String getCatalogId() {
+        return catalogId;
+    }
+
+    public void setCatalogId(String catalogId) {
+        this.catalogId = catalogId;
+    }
 
     public String getName() {
         return name;
@@ -21,12 +30,12 @@ public class ResourceNameDto {
         this.name = name;
     }
 
-    public String getResourceId() {
-        return resourceId;
+    public String getDescription() {
+        return description;
     }
 
-    public void setResourceId(String resourceId) {
-        this.resourceId = resourceId;
+    public void setDescription(String description) {
+        this.description = description;
     }
     
     
