@@ -48,10 +48,10 @@ public class NodeController {
     }
     @RequestMapping(value = "/node/addresources/{nodeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<?> addResources(@PathVariable String nodeId, @RequestParam List<ResourceDto> resources/*, 
-            @RequestParam String InputOrOutputResources */){
+    public ResponseEntity<?> addResources(@PathVariable String nodeId, @RequestParam ("resources") List<ResourceDto> resources, 
+            @RequestParam ("inputOrOutputResources") String inputOrOutputResources ){
        // nodeService.addInputOrOutputResourcesToNode(nodeId,/* resources,*/ InputOrOutputResources);
-     return new ResponseEntity<>( "sucsess",HttpStatus.OK);
+     return new ResponseEntity<>( HttpStatus.OK);
     }
     
     

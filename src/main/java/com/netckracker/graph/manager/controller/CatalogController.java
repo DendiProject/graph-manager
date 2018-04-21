@@ -45,4 +45,10 @@ public class CatalogController {
          else   return new ResponseEntity<>(catalog, HttpStatus.OK);
             
     }    
+        @RequestMapping(value = "/test", method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+        public ResponseEntity<String> testGet() {           
+        return new ResponseEntity<>("sucsess", HttpStatus.OK);           
+    }   
+    
 }

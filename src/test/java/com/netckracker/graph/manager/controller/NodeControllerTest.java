@@ -5,6 +5,7 @@
  */
 package com.netckracker.graph.manager.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
@@ -137,23 +138,33 @@ public class NodeControllerTest {
         ResourceDto resource2=new ResourceDto();
         resource1.setResourceId(resourceId1);
         resource1.setResourceNumber(2);
-        resource1.setResourceId(resourceId2);
-        resource1.setResourceNumber(2.5);
+        resource2.setResourceId(resourceId2);
+        resource2.setResourceNumber(2.5);
         resources.add(resource1);
         resources.add(resource2);        
         String json = new Gson().toJson(resources);
         ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
-        String nodeId=nodeService.createNode(receipe.getReceipeId(), userId);
-       /* MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+      /*  String nodeId=nodeService.createNode(receipe.getReceipeId(), userId);
+        System.out.println(json);
+        Gson gson = new Gson();
+        json=gson.toJson(resource1, ResourceDto.class);
+        System.out.println(json);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/node/addresources/"+nodeId);
-        request.param("InputOrOutputResources","input");  
-        request.param("resources[0].resourceId",resourceId1 );  
-        request.param("resources[0].resourceNumber","2" );  
-        request.content(json);
+        request.param("inputOrOutputResources","input");  
+        request.param("resources",json);  
+        //request.param("resources[0].resourceNumber","2" );  
+       // request.content(json);
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request)
                  .andExpect(MockMvcResultMatchers.status().isOk());*/
     }
-    
+    public static String asJsonString(final Object obj) {
+    try {
+        return new ObjectMapper().writeValueAsString(obj);
+    } catch (Exception e) {
+        throw new RuntimeException(e);
+    }
+}
 }

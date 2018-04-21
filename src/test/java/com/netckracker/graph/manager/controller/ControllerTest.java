@@ -13,7 +13,11 @@ import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ReceipeService;
 import com.netckracker.graph.manager.service.ResourceService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -51,16 +56,18 @@ public class ControllerTest {
     private CatalogService catalogService;
     String userId;
     
+    private String baseUrl="http://localhost:8082";
     @Before
     public void setUp() {
         restTemplate=new RestTemplate() ;
+        
         mockServer = MockRestServiceServer.createServer(restTemplate); 
     }
     
     @Test
     public void addNodeResourcesTest()
     {
-       /* Node node=new Node();
+        /*Node node=new Node();
         Node saved=nodeRepository.save(node);
         userId="111233";
         List<ResourceDto> resources=new ArrayList<>();
@@ -70,18 +77,25 @@ public class ControllerTest {
         ResourceDto resource2=new ResourceDto();
         resource1.setResourceId(resourceId1);
         resource1.setResourceNumber(2);
-        resource1.setResourceId(resourceId2);
-        resource1.setResourceNumber(2.5);
-        resources.add(resource1);
-
+        resource2.setResourceId(resourceId2);
+        resource2.setResourceNumber(2.5);
+        resources.add(resource1);*/
+        String s="test string";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        String uri="http://localhost:8082/node/addresources/"+saved.getNodeId();
-        HttpEntity<Object> requestEntity = new HttpEntity<Object>(resources,headers);
-        String response = restTemplate.postForObject(uri, requestEntity, String.class);
-        
-        System.out.println(response);
+        String uri=baseUrl+"/test";
+        Map <String, String> input = new HashMap<>();
+        input.put("testString", s);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> requestEntity = new HttpEntity<Object>(input,headers);
+        String result = restTemplate.postForObject(uri, requestEntity, String.class);
+       // assertEquals(200, response.getStatusCode().value());
+       // assertNotNull(response.getBody());
+       // System.out.println(response);
+        //System.out.println(response);
         //ResponseEntity<String> response = restTemplate.postForObject("/", resources,  String.class);*/
+        
+       // mockServer.expect(uri)
     } 
 
 }
