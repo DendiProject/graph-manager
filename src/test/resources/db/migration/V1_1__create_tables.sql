@@ -21,12 +21,13 @@ create table Node (
 );
 
 create table NodeResources (
-    input_or_output varchar(255), 
+    node_resource_id varchar(255),
+    input_output varchar(255), 
     number_of_resource double, 
-    resource_id varchar(255) not null, 
+    resource_id varchar(255), 
     node_id varchar(255), 
     version_id varchar(255), 
-    CONSTRAINT noderesources_pkey PRIMARY KEY (resource_id)
+    CONSTRAINT noderesources_pkey PRIMARY KEY (node_resource_id)
 );
 
 create table Receipe (
@@ -86,7 +87,7 @@ alter table Edges add constraint FKbhrkb857l3ovgv0134skfi9nf foreign key (end_no
 alter table Edges add constraint FKjq0a1a85w4edxbrdgmo392ey7 foreign key (start_node_id) references Node;
 alter table UserStep add constraint FK4yj9gl2grk3pasi0j4a21s2q3 foreign key (version_id) references ReceipeVersion;
 alter table UserStep add constraint FKt69hxm5viytprnfpfovcxwr7c foreign key (node_id) references Node;
-/*alter table Resources add constraint nodeIdFK foreign key (node_id) references Node;*/
+alter table Resources add constraint nodeIdFK foreign key (node_id) references Node;
 
 CREATE TABLE Receipe_tagList 
     (Receipe_receipe_id varchar(255) not null, 

@@ -65,9 +65,9 @@ public class ReceipeController {
     @RequestMapping(value = "/receipe/addreceiperesources/{receipeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> addReceipeResource(@PathVariable ("receipeId") String receipeId, 
-            @RequestParam("userId")  String userId, @RequestParam ("resourceId") String resourceId){
-       //  String receipeResource=receipeService.addReceipeResources(receipeId, userId, resourceId, 0);
-        return new ResponseEntity<>(HttpStatus.OK);
+            @RequestParam("userId")  String userId, @RequestParam ("resourceId") String resourceId, @RequestParam ("resourceNumber") double resourceNumber){
+         String receipeResource=receipeService.addReceipeResources(receipeId, userId, resourceId, resourceNumber);
+        return new ResponseEntity<>(receipeResource, HttpStatus.OK);
     }
     @RequestMapping(value = "/receipe/getpublicandcompleted", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
@@ -103,5 +103,14 @@ public class ReceipeController {
             return new ResponseEntity<>(receipes, HttpStatus.OK);
         } 
     }
+    
+        @RequestMapping(value = "/receipe/getgraph", method = RequestMethod.GET, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<Void> getGraph( @RequestParam ("user") String userId, @RequestParam ("receipe") String receipeId){
+                System.out.println(userId);
+            return new ResponseEntity<>( HttpStatus.OK);
+        
+    }
+    
     
 }

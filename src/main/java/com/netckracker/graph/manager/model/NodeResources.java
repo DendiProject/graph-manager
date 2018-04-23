@@ -27,19 +27,19 @@ public class NodeResources implements Serializable {
     @JoinColumn(name = "resource_id")
     private Resources resource;
 
-    @ManyToOne
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "node_id")
     private Node node;
     
-    @ManyToOne
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "version_id")
     private ReceipeVersion version;
     
     @Column (name="number_of_resource")
     private double numberOfResource;
     
-    @Column (name="input_or_output")
-    private String inputOrOutput;
+    @Column (name="input_output")
+    private String inputOutput;
 
     public String getNodeResourceId() {
         return nodeResourceId;
@@ -82,11 +82,11 @@ public class NodeResources implements Serializable {
     }
 
     public String getInputOrOutput() {
-        return inputOrOutput;
+        return inputOutput;
     }
 
     public void setInputOrOutput(String inputOrOutput) {
-        this.inputOrOutput = inputOrOutput;
+        this.inputOutput = inputOrOutput;
     }
     
     

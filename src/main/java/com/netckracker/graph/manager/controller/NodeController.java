@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -48,8 +49,8 @@ public class NodeController {
     }
     @RequestMapping(value = "/node/addresources/{nodeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<?> addResources(@PathVariable String nodeId, @RequestParam List<ResourceDto> resources/*, 
-            @RequestParam String InputOrOutputResources */){
+    public ResponseEntity<?> addResources(@PathVariable String nodeId,@RequestParam String InputOrOutputResources,
+            @RequestParam ("resources") List<ResourceDto> resources){
        // nodeService.addInputOrOutputResourcesToNode(nodeId,/* resources,*/ InputOrOutputResources);
      return new ResponseEntity<>( "sucsess",HttpStatus.OK);
     }

@@ -29,7 +29,12 @@ public class ResourceDto {
     public void setResourceNumber(double resourceNumber) {
         this.resourceNumber = resourceNumber;
     }
-    
 
+    @Override
+    public String toString() {
+        return "ResourceDto{" + "resourceId=" + resourceId + ", resourceNumber=" + resourceNumber + '}';
+    }
+    
+    
    
 }

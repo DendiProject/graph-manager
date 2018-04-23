@@ -5,6 +5,8 @@
  */
 package com.netckracker.graph.manager.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
@@ -16,6 +18,7 @@ import com.netckracker.graph.manager.service.CatalogService;
 import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ReceipeService;
 import com.netckracker.graph.manager.service.ResourceService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -141,19 +144,28 @@ public class NodeControllerTest {
         resource1.setResourceNumber(2.5);
         resources.add(resource1);
         resources.add(resource2);        
-        String json = new Gson().toJson(resources);
+        String json1 = new Gson().toJson(resource1);
+        String json2 = new Gson().toJson(resource2);
         ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
         String nodeId=nodeService.createNode(receipe.getReceipeId(), userId);
        /* MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/node/addresources/"+nodeId);
-        request.param("InputOrOutputResources","input");  
-        request.param("resources[0].resourceId",resourceId1 );  
-        request.param("resources[0].resourceNumber","2" );  
-        request.content(json);
+        request.param("InputOrOutputResources","input");         
+        request.param("resources", resource1.toString());  
+        request.content(convertObjectToJsonBytes(resource1));
+        System.out.println(json1);
+        System.out.println(resource1);
+        //request.param("resources",resource1.toString());
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request)
                  .andExpect(MockMvcResultMatchers.status().isOk());*/
     }
+    
+   /* public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper.writeValueAsBytes(object);
+    }*/
     
 }

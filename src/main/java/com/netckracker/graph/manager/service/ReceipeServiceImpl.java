@@ -99,7 +99,8 @@ public class ReceipeServiceImpl implements ReceipeService{
         NodeResources nodeResource=new NodeResources();
         nodeResource.setResource(resource);
         nodeResource.setVersion(version);
-        nodeResource.setNumberOfResource(resourceNumber);        
+        nodeResource.setNumberOfResource(resourceNumber);  
+        
         NodeResources saved=nodeResourcesRepository.save(nodeResource);
         return saved.getNodeResourceId();
     }

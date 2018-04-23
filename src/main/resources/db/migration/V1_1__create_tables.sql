@@ -30,12 +30,14 @@ WITH (
 );
 
 create table NodeResources (
-    input_or_output varchar(255), 
+    create table NodeResources (
+    node_resource_id varchar(255),
+    input_output varchar(255), 
     number_of_resource double, 
-    resource_id varchar(255) not null, 
+    resource_id varchar(255), 
     node_id varchar(255), 
     version_id varchar(255), 
-    CONSTRAINT noderesources_pkey PRIMARY KEY (resource_id)
+    CONSTRAINT noderesources_pkey PRIMARY KEY (node_resource_id)
 )
 WITH (
     OIDS = FALSE
@@ -68,7 +70,7 @@ WITH (
 );
 create table Resources (
 resource_id varchar(255) not null, 
-ingredient_or_resource varchar(255), 
+ingredient_resource varchar(255), 
 measuring varchar(255), 
 name varchar(255), 
 user_id varchar(255),

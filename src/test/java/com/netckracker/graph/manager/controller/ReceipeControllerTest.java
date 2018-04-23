@@ -185,18 +185,30 @@ public class ReceipeControllerTest {
     @Test
     public void addReceipeResourceTest() throws Exception
     {
+        userId="11112222";
        String resourceId=resourceService.createResource("egg", userId, "g", "ingredient", null);       
         ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/receipe/addreceiperesources/"+receipe.getReceipeId());
-       // request.param("receipeId", receipe.getReceipeId());
         request.param("userId",userId);
         request.param("resourceId", resourceId);
-       // request.param("resourceNumber", String.);
+        request.param("resourceNumber", String.valueOf(2));
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
-       /* ResultActions result = mockMvc.perform(request)
-                 .andExpect(MockMvcResultMatchers.status().isOk());*/
-        
+        ResultActions result = mockMvc.perform(request)
+                 .andExpect(MockMvcResultMatchers.status().isOk());       
+    }
+    
+    @Test 
+    public void getGraphTest() throws Exception
+    {
+        ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/receipe/getgraph");
+        request.param("receipe", "12345");
+        request.param("user","1111");
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);ResultActions result = mockMvc.perform(request)
+                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
