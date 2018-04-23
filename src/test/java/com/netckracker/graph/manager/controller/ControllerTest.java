@@ -5,19 +5,13 @@
  */
 package com.netckracker.graph.manager.controller;
 
-import com.netckracker.graph.manager.model.Node;
-import com.netckracker.graph.manager.modelDto.ResourceDto;
 import com.netckracker.graph.manager.repository.NodeRepository;
 import com.netckracker.graph.manager.service.CatalogService;
 import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ReceipeService;
 import com.netckracker.graph.manager.service.ResourceService;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,11 +20,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,11 +32,12 @@ import org.springframework.web.client.RestTemplate;
  * @author eliza
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest
-@WebAppConfiguration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ControllerTest {
-   private MockRestServiceServer mockServer;
+
+    private MockRestServiceServer mockServer;
     private RestTemplate restTemplate;
+    private final RestTemplate testRestTemplate=new RestTemplate();
     @Autowired
     private NodeService nodeService;
     @Autowired
@@ -55,18 +49,26 @@ public class ControllerTest {
     @Autowired
     private CatalogService catalogService;
     String userId;
-    
-    private String baseUrl="http://localhost:8082";
+
+    @LocalServerPort
+    private int port;
+
+    @Value("${server.contextPath}")
+    String serverContexPath;
+
+    protected String getAbsoluteUrl() {
+        return "http://localhost:" + port + serverContexPath;
+    }
+
     @Before
     public void setUp() {
-        restTemplate=new RestTemplate() ;
-        
-        mockServer = MockRestServiceServer.createServer(restTemplate); 
+        restTemplate = new RestTemplate();
+
+        mockServer = MockRestServiceServer.createServer(restTemplate);
     }
-    
+
     @Test
-    public void addNodeResourcesTest()
-    {
+    public void addNodeResourcesTest() {
         /*Node node=new Node();
         Node saved=nodeRepository.save(node);
         userId="111233";
@@ -79,23 +81,16 @@ public class ControllerTest {
         resource1.setResourceNumber(2);
         resource2.setResourceId(resourceId2);
         resource2.setResourceNumber(2.5);
-        resources.add(resource1);*/
-        String s="test string";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        String uri=baseUrl+"/test";
-        Map <String, String> input = new HashMap<>();
-        input.put("testString", s);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Object> requestEntity = new HttpEntity<Object>(input,headers);
-        String result = restTemplate.postForObject(uri, requestEntity, String.class);
-       // assertEquals(200, response.getStatusCode().value());
-       // assertNotNull(response.getBody());
-       // System.out.println(response);
+        resources.add(resource1);*/        
+        String uri = getAbsoluteUrl() + "/test";        
+        String result = testRestTemplate.getForObject(uri, String.class);
+        // assertEquals(200, response.getStatusCode().value());
+        // assertNotNull(response.getBody());
+        // System.out.println(response);
         //System.out.println(response);
         //ResponseEntity<String> response = restTemplate.postForObject("/", resources,  String.class);*/
-        
-       // mockServer.expect(uri)
-    } 
+
+        // mockServer.expect(uri)
+    }
 
 }

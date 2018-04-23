@@ -1,3 +1,5 @@
+server:  
+  contextPath: /
 spring:
   jpa:
     database: H2

@@ -31,7 +31,7 @@ WITH (
 
 create table NodeResources (
     input_or_output varchar(255), 
-    number_of_resource double, 
+    number_of_resource 	float8, 
     resource_id varchar(255) not null, 
     node_id varchar(255), 
     version_id varchar(255), 

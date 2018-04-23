@@ -23,32 +23,34 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class CatalogController {
+
     @Autowired
     private CatalogService catalogService;
-    
-    @RequestMapping(value = "/catalog/create", method = RequestMethod.POST, 
+
+    @RequestMapping(value = "/catalog/create", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> addCatalog(@RequestParam String catalogName, @RequestParam String description){
-        String catalogId=catalogService.createCatalog(catalogName, description);
-     return new ResponseEntity<>(catalogId, HttpStatus.OK);
+    public ResponseEntity<String> addCatalog(@RequestParam String catalogName, @RequestParam String description) {
+        String catalogId = catalogService.createCatalog(catalogName, description);
+        return new ResponseEntity<>(catalogId, HttpStatus.OK);
     }
-    
+
     @RequestMapping(value = "/catalog/getbyname/{catalogName}", method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<Catalog> getCatalogByName(@PathVariable ("catalogName") String catalogeName)  {
-        Catalog catalog=catalogService.findCatalog(catalogeName); 
-    
-        if (catalog==null)
-        {
+    public ResponseEntity<Catalog> getCatalogByName(@PathVariable("catalogName") String catalogeName) {
+        Catalog catalog = catalogService.findCatalog(catalogeName);
+
+        if (catalog == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(catalog, HttpStatus.OK);
         }
-         else   return new ResponseEntity<>(catalog, HttpStatus.OK);
-            
-    }    
-        @RequestMapping(value = "/test", method = RequestMethod.GET,
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-        public ResponseEntity<String> testGet() {           
-        return new ResponseEntity<>("sucsess", HttpStatus.OK);           
-    }   
-    
+
+    }
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET
+            )
+    public ResponseEntity<String> testGet() {
+        return new ResponseEntity<>("sucsess", HttpStatus.OK);
+    }
+
 }
