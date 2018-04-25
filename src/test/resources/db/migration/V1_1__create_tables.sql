@@ -23,7 +23,7 @@ create table Node (
 create table NodeResources (
     node_resource_id varchar(255),
     input_output varchar(255), 
-    number_of_resource double, 
+    number_of_resource float8, 
     resource_id varchar(255), 
     node_id varchar(255), 
     version_id varchar(255), 

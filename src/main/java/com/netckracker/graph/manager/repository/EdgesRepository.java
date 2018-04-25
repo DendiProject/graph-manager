@@ -6,6 +6,7 @@
 package com.netckracker.graph.manager.repository;
 
 import com.netckracker.graph.manager.model.Edges;
+import com.netckracker.graph.manager.model.Node;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +16,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface EdgesRepository extends JpaRepository <Edges, String>  {
-    
+    Edges findByStartNodeAndEndNode(Node startNode, Node endNode);
 }

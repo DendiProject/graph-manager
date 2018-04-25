@@ -103,14 +103,5 @@ public class ReceipeController {
             return new ResponseEntity<>(receipes, HttpStatus.OK);
         } 
     }
-    
-        @RequestMapping(value = "/receipe/getgraph", method = RequestMethod.GET, 
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<Void> getGraph( @RequestParam ("user") String userId, @RequestParam ("receipe") String receipeId){
-                System.out.println(userId);
-            return new ResponseEntity<>( HttpStatus.OK);
-        
-    }
-    
-    
+  
 }

@@ -12,8 +12,8 @@ package com.netckracker.graph.manager.modelDto;
 public class ResourceDto {
     
     private String resourceId;
+    private String name;
     private double resourceNumber;
-
     public String getResourceId() {
         return resourceId;
     }
@@ -30,11 +30,11 @@ public class ResourceDto {
         this.resourceNumber = resourceNumber;
     }
 
-    @Override
-    public String toString() {
-        return "ResourceDto{" + "resourceId=" + resourceId + ", resourceNumber=" + resourceNumber + '}';
+    public String getName() {
+        return name;
     }
-    
-    
-   
+
+    public void setName(String name) {
+        this.name = name;
+    } 
 }

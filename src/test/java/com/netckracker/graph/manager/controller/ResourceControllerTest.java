@@ -75,31 +75,29 @@ public class ResourceControllerTest {
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
         
-        MvcResult  result = mockMvc.perform(request).andReturn(); 
-        Resources resource=resourceRepository.findByResourceId(result.getResponse().getContentAsString());
-      assertEquals("resourceId incorrecrt", resource.getResourceId(), result.getResponse().getContentAsString());
-      assertEquals("name incorrecrt", name, resource.getName());
-      assertEquals("resourceOrIngredient incorrect", resourceOrIngredient, resource.getIngredientOrResource());
-      assertEquals("measuring incorrect", measuring, resource.getMeasuring());
+    MvcResult  result = mockMvc.perform(request).andReturn(); 
+    Resources resource=resourceRepository.findByResourceId(result.getResponse().getContentAsString());
+    assertEquals("resourceId incorrecrt", resource.getResourceId(), result.getResponse().getContentAsString());
+    assertEquals("name incorrecrt", name, resource.getName());
+    assertEquals("resourceOrIngredient incorrect", resourceOrIngredient, resource.getIngredientOrResource());
+    assertEquals("measuring incorrect", measuring, resource.getMeasuring());
     }
     
     @Test
     public void getResourcesByFirstLettersTest() throws UnsupportedEncodingException, Exception
     {
         
-        String resourceId1=resourceService.createResource("apple1", null, "piecec", "ingredient", null);
-        String resourceId2=resourceService.createResource("apple2", null, "piecec", "ingredient", null);
+        String resourceId1=resourceService.createResource("strawberry1", null, "piecec", "ingredient", null);
+        String resourceId2=resourceService.createResource("strawberry2", null, "piecec", "ingredient", null);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-            .get("/resource/getbyfirstletters/app");
+            .get("/resource/getbyfirstletters/straw");
         request.param("page", "0");
         request.param("size", "5");
         request.param("ingredientOrResource", "ingredient");
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
-        //ResultActions result = mockMvc.perform(request)
-         //        .andExpect(MockMvcResultMatchers.status().isOk());
         MvcResult  result = mockMvc.perform(request).andReturn();         
-       String expected = "[{resourceId:"+resourceId1+",name:apple1},{resourceId:"+resourceId2+",name:apple2}]";
+        String expected = "[{resourceId:"+resourceId1+",name:strawberry1},{resourceId:"+resourceId2+",name:strawberry2}]";
        JSONAssert.assertEquals( expected, result.getResponse().getContentAsString(), false);
         
     }

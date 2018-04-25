@@ -45,4 +45,9 @@ public class CatalogController {
          else   return new ResponseEntity<>(catalog, HttpStatus.OK);
             
     }    
+    
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+         public ResponseEntity<String> testGet() {
+        return new ResponseEntity<>("sucsess", HttpStatus.OK);
+    }
 }

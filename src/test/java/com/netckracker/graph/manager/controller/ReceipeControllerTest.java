@@ -9,8 +9,10 @@ import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.repository.ReceipeRepository;
 import com.netckracker.graph.manager.service.CatalogService;
+import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ReceipeService;
 import com.netckracker.graph.manager.service.ResourceService;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
@@ -48,6 +50,8 @@ public class ReceipeControllerTest {
     private ReceipeService receipeService;
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private NodeService nodeService;
     @Autowired
     private ReceipeRepository receipeRepository;
     @Autowired
@@ -186,7 +190,7 @@ public class ReceipeControllerTest {
     public void addReceipeResourceTest() throws Exception
     {
         userId="11112222";
-       String resourceId=resourceService.createResource("egg", userId, "g", "ingredient", null);       
+        String resourceId=resourceService.createResource("egg", userId, "g", "ingredient", null);       
         ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/receipe/addreceiperesources/"+receipe.getReceipeId());
@@ -202,13 +206,50 @@ public class ReceipeControllerTest {
     @Test 
     public void getGraphTest() throws Exception
     {
-        ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
+        userId="9999";
+        catalogId=catalogService.createCatalog("soupcatalog", "description");
+        ReceipeDto receipe=receipeService.createReceipe("soup", "description", catalogId, userId, true);
+        
+        String resourceId=resourceService.createResource("egg", userId, "g", "ingredient", null); 
+        receipeService.addReceipeResources(receipe.getReceipeId(), userId, resourceId, 2);
+        
+        String startNodeId=nodeService.createNode(receipe.getReceipeId(), userId);
+        nodeService.addNodeDescription(startNodeId, "description");
+        nodeService.addNodePicture(startNodeId, "1111");
+        
+        String endNodeId=nodeService.createNode(receipe.getReceipeId(), userId);
+        nodeService.addNodeDescription(endNodeId, "description");
+        nodeService.addNodePicture(endNodeId, "1111");
+        
+        nodeService.createEdge(startNodeId, endNodeId);
+        
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get("/receipe/getgraph");
-        request.param("receipe", "12345");
-        request.param("user","1111");
+                .get("/graph/getgraph");
+        request.param("receipeId", receipe.getReceipeId());
+        request.param("userId",userId);
         request.accept(MediaType.APPLICATION_JSON);
-        request.contentType(MediaType.APPLICATION_JSON);ResultActions result = mockMvc.perform(request)
-                 .andExpect(MockMvcResultMatchers.status().isOk());
+        request.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result = mockMvc.perform(request).andReturn(); 
+        
+        JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
+        JSONArray resources=jsonObject.getJSONArray("indredients");
+        JSONArray nodes=jsonObject.getJSONArray("nodes");
+        JSONArray edges=jsonObject.getJSONArray("edges");
+        JSONObject resource = resources.getJSONObject(0);
+        JSONObject node1=nodes.getJSONObject(0);
+        JSONObject node2=nodes.getJSONObject(1);
+        JSONObject edge=edges.getJSONObject(0);
+        
+        assertEquals("ingredient Id incorrect", resourceId, resource.getString("resourceId"));
+        assertEquals("ingredient name incorrecrt", "egg", resource.getString("name"));
+        assertEquals("ingredient number incorrecrt","2.0", resource.getString("resourceNumber"));
+        assertEquals("first nodeId incorrect", startNodeId, node1.getString("nodeId"));
+        assertEquals("first node description incorrect", "description", node1.getString("description"));
+        assertEquals("first node pictureId incorrect", "1111", node1.getString("pictureId"));
+        assertEquals("second nodeId incorrect", endNodeId, node2.getString("nodeId"));
+        assertEquals("second node description incorrect", "description", node2.getString("description"));
+        assertEquals("second node pictureId incorrect", "1111", node2.getString("pictureId"));
+        assertEquals("start node id incorrect", startNodeId, edge.getString("startNodeId"));
+        assertEquals("end node id incorrect", endNodeId, edge.getString("endNodeId"));
     }
 }

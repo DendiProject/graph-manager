@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -129,43 +131,86 @@ public class NodeControllerTest {
                  .andExpect(MockMvcResultMatchers.status().isOk());
     } 
     
-    @Test
-    public void addNodeResource() throws Exception
+    @Test 
+    public void deleteNodeTest() throws Exception
     {
-        userId="111233";
-        List<ResourceDto> resources=new ArrayList<>();
-        String resourceId1=resourceService.createResource("orange1", null, "piecec", "ingredient", null);
-        String resourceId2=resourceService.createResource("orange2", null, "piecec", "ingredient", null);
-        ResourceDto resource1=new ResourceDto();
-        ResourceDto resource2=new ResourceDto();
-        resource1.setResourceId(resourceId1);
-        resource1.setResourceNumber(2);
-        resource1.setResourceId(resourceId2);
-        resource1.setResourceNumber(2.5);
-        resources.add(resource1);
-        resources.add(resource2);        
-        String json1 = new Gson().toJson(resource1);
-        String json2 = new Gson().toJson(resource2);
-        ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
-        String nodeId=nodeService.createNode(receipe.getReceipeId(), userId);
-       /* MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post("/node/addresources/"+nodeId);
-        request.param("InputOrOutputResources","input");         
-        request.param("resources", resource1.toString());  
-        request.content(convertObjectToJsonBytes(resource1));
-        System.out.println(json1);
-        System.out.println(resource1);
-        //request.param("resources",resource1.toString());
-        request.accept(MediaType.APPLICATION_JSON);
-        request.contentType(MediaType.APPLICATION_JSON);
+        Node node=new Node();
+        Node saved=nodeRepository.save(node);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete("/node/deletenode/"+saved.getNodeId());
         ResultActions result = mockMvc.perform(request)
-                 .andExpect(MockMvcResultMatchers.status().isOk());*/
+                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
     
-   /* public static byte[] convertObjectToJsonBytes(Object object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper.writeValueAsBytes(object);
-    }*/
+    @Test 
+    public void deleteEdgeTest() throws Exception
+    {
+        Node startNode=new Node();
+        Node saved1=nodeRepository.save(startNode);
+        Node endNode=new Node();
+        Node saved2=nodeRepository.save(endNode);
+        nodeService.createEdge(saved1.getNodeId(), saved2.getNodeId());
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete("/node/deleteedge");
+        request.param("startNodeId",saved1.getNodeId());  
+        request.param("endNodeId",saved2.getNodeId());  
+        ResultActions result = mockMvc.perform(request)
+                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
     
+    @Test
+    public void getNodeInputResources() throws Exception
+    {
+        Node node=new Node();
+        Node saved=nodeRepository.save(node);
+        String resourceId=resourceService.createResource("bread", userId, "g", "ingredient", null);
+        ResourceDto resource=new ResourceDto();
+        resource.setResourceId(resourceId);
+        resource.setName("bread");
+        resource.setResourceNumber(3);
+        List<ResourceDto> resources =new ArrayList<>();
+        resources.add(resource);
+        nodeService.addInputOrOutputResourcesToNode(saved.getNodeId(), resources, "input");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/node/getinputresources/"+saved.getNodeId());
+        request.param("ingredientOrResource","ingredient"); 
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result = mockMvc.perform(request).andReturn(); 
+        
+        JSONArray array = new JSONArray(result.getResponse().getContentAsString());     
+        JSONObject jsonResource = array.getJSONObject(0);
+
+        assertEquals("ingredient Id incorrect", resourceId, jsonResource.getString("resourceId"));
+        assertEquals("ingredient name incorrecrt", "bread", jsonResource.getString("name"));
+        assertEquals("ingredient number incorrecrt","3.0", jsonResource.getString("resourceNumber"));
+    }
+    
+    @Test
+    public void getNodeOutPutResources() throws Exception
+    {
+        Node node=new Node();
+        Node saved=nodeRepository.save(node);
+        String resourceId=resourceService.createResource("milk", userId, "g", "ingredient", null);
+        ResourceDto resource=new ResourceDto();
+        resource.setResourceId(resourceId);
+        resource.setName("bread");
+        resource.setResourceNumber(1);
+        List<ResourceDto> resources =new ArrayList<>();
+        resources.add(resource);
+        nodeService.addInputOrOutputResourcesToNode(saved.getNodeId(), resources, "output");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/node/getoutputresources/"+saved.getNodeId());
+        request.param("ingredientOrResource","ingredient"); 
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result = mockMvc.perform(request).andReturn(); 
+        
+        JSONArray array = new JSONArray(result.getResponse().getContentAsString());     
+        JSONObject jsonResource = array.getJSONObject(0);
+
+        assertEquals("ingredient Id incorrect", resourceId, jsonResource.getString("resourceId"));
+        assertEquals("ingredient name incorrecrt", "milk", jsonResource.getString("name"));
+        assertEquals("ingredient number incorrecrt","1.0", jsonResource.getString("resourceNumber"));
+    }
 }

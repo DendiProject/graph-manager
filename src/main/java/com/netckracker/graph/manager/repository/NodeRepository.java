@@ -7,6 +7,7 @@ package com.netckracker.graph.manager.repository;
 
 import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.model.ReceipeVersion;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +18,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NodeRepository extends JpaRepository <Node, String> {
     Node findByNodeId(String nodeId);
+    List<Node> findByVersion(ReceipeVersion version);
     
 }

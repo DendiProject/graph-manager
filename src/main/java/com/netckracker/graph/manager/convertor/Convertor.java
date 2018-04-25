@@ -5,10 +5,15 @@
  */
 package com.netckracker.graph.manager.convertor;
 
+import com.netckracker.graph.manager.model.Edges;
+import com.netckracker.graph.manager.model.Node;
+import com.netckracker.graph.manager.model.NodeResources;
 import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.model.Tags;
 import com.netckracker.graph.manager.modelDto.CatalogDto;
+import com.netckracker.graph.manager.modelDto.EdgeDto;
+import com.netckracker.graph.manager.modelDto.NodeDto;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
@@ -60,9 +65,33 @@ public class Convertor {
         return receipeInformationDto;
     }
     
+    public NodeDto convertNodeToDto(Node node)
+    {
+        NodeDto nodeDto=modelMapper.map(node, NodeDto.class);
+        return nodeDto;
+    }
+    
+    public EdgeDto convertEgdeToDto(Edges edge)
+    {
+        EdgeDto edgeDto=new EdgeDto();
+        edgeDto.setStartNodeId(edge.getStartNode().getNodeId());
+        edgeDto.setEndNodeId(edge.getEndNode().getNodeId());
+        return edgeDto;
+    }
+    
+    public ResourceDto convertNodeResourceToDto(NodeResources nodeResource)
+    {
+        ResourceDto resourceDto=new ResourceDto();
+        resourceDto.setName(nodeResource.getResource().getName());
+        resourceDto.setResourceId(nodeResource.getResource().getResourceId());
+        resourceDto.setResourceNumber(nodeResource.getNumberOfResource());
+        return resourceDto;
+    }
+    
  /*   public CatalogDto convertCatalogToDto(Catalog catalog)
     {
         TagsDto tagsDto=modelMapper.map(tag, TagsDto.class);
         return tagsDto;
     }*/
+
 }
