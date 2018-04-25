@@ -30,7 +30,6 @@ WITH (
 );
 
 create table NodeResources (
-    create table NodeResources (
     node_resource_id varchar(255),
     input_output varchar(255), 
     number_of_resource float8, 
@@ -39,6 +38,7 @@ create table NodeResources (
     version_id varchar(255), 
     CONSTRAINT noderesources_pkey PRIMARY KEY (node_resource_id)
 )
+
 WITH (
     OIDS = FALSE
 );
@@ -54,6 +54,7 @@ create table Receipe (
     catalog_id varchar(255), 
     CONSTRAINT receipe_pkey PRIMARY KEY (receipe_id)
 )
+
 WITH (
     OIDS = FALSE
 );
@@ -64,13 +65,14 @@ is_main_version boolean,
 user_id varchar(255), 
 receipe_id varchar(255), 
 CONSTRAINT version_pkey PRIMARY KEY (version_id)
+
 )
 WITH (
     OIDS = FALSE
 );
 create table Resources (
 resource_id varchar(255) not null, 
-ingredient_resource varchar(255), 
+ingredient_or_resource varchar(255), 
 measuring varchar(255), 
 name varchar(255), 
 user_id varchar(255),
@@ -81,6 +83,7 @@ CONSTRAINT resources_pkey PRIMARY KEY (resource_id)
 WITH (
     OIDS = FALSE
 );
+
 create table Tags (
 tag_id varchar(255) not null,
  name varchar(255),  

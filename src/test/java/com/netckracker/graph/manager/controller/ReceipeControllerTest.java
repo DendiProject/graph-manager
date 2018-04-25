@@ -252,4 +252,19 @@ public class ReceipeControllerTest {
         assertEquals("start node id incorrect", startNodeId, edge.getString("startNodeId"));
         assertEquals("end node id incorrect", endNodeId, edge.getString("endNodeId"));
     }
+    
+    @Test
+    public void getTestGraph() throws Exception
+    {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/graph/gettestgraph");
+        request.param("receipeId", "12345");
+        request.param("userId","1111");
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result = mockMvc.perform(request).andReturn(); 
+        System.out.println(result.getResponse().getContentAsString());
+       // JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
+    }
+    
 }

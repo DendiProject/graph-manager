@@ -113,6 +113,11 @@ public class NodeController {
             return new ResponseEntity<>(graph, HttpStatus.OK);        
     }
     
-    
-    
+    @RequestMapping(value = "/graph/gettestgraph", method = RequestMethod.GET, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<?> getTestGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
+                GraphDto graph=nodeService.getReceipeTestGraph(receipeId, userId);
+            return new ResponseEntity<>(graph, HttpStatus.OK);        
+    }  
+ 
 }

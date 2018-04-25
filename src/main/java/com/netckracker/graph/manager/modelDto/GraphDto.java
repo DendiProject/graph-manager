@@ -20,6 +20,7 @@ public class GraphDto {
     private List<ResourceDto> indredients;
     private List<NodeDto> nodes;
     private Set<EdgeDto> edges;
+    private String receipeName;
 
     public GraphDto() {
         this.edges=new HashSet<>();
@@ -59,6 +60,14 @@ public class GraphDto {
 
     public void setEdges(Set<EdgeDto> edges) {
         this.edges = edges;
+    }
+
+    public String getReceipeName() {
+        return receipeName;
+    }
+
+    public void setReceipeName(String receipeName) {
+        this.receipeName = receipeName;
     }
     
     

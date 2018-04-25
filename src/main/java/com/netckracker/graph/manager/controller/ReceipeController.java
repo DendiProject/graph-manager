@@ -59,9 +59,7 @@ public class ReceipeController {
        receipeService.deleteReceipe(receipeId, userId);
        return new ResponseEntity<>(HttpStatus.OK);
     }
-    
- 
-    
+
     @RequestMapping(value = "/receipe/addreceiperesources/{receipeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> addReceipeResource(@PathVariable ("receipeId") String receipeId, 
