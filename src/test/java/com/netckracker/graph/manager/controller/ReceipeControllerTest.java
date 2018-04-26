@@ -260,10 +260,12 @@ public class ReceipeControllerTest {
                 .get("/graph/gettestgraph");
         request.param("receipeId", "12345");
         request.param("userId","1111");
-        request.accept(MediaType.APPLICATION_JSON);
-        request.contentType(MediaType.APPLICATION_JSON);
-        MvcResult  result = mockMvc.perform(request).andReturn(); 
-        System.out.println(result.getResponse().getContentAsString());
+       // request.accept(MediaType.APPLICATION_JSON);
+       // request.contentType(MediaType.APPLICATION_JSON);
+       ResultActions result = mockMvc.perform(request)
+                 .andExpect(MockMvcResultMatchers.status().isOk());       
+        MvcResult  result2 = mockMvc.perform(request).andReturn();
+        System.out.println(result2.getResponse().getContentAsString());
        // JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
     }
     
