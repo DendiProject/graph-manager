@@ -1,0 +1,23 @@
+server:
+    contextPath: /
+spring:
+  jpa:
+    database: H2
+    show-sql: true
+    hibernate:
+      dialect: org.hibernate.dialect.H2Dialect
+      format_sql: true
+      ddl-auto: none
+      naming:
+       physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.datasource:  
+  driverClassName: org.h2.Driver
+  url: jdbc:h2:mem:testReceipes;DB_CLOSE_DELAY=-1;
+  username: sa
+  password: 
+  platform: h2
+  testWhileIdle: true
+  validationQuery: SELECT 1
+flyway:
+  enabled: true
+  metaDataTableName: schema_version
