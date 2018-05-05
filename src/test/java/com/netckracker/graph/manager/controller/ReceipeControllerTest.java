@@ -256,7 +256,7 @@ public class ReceipeControllerTest {
     @Test
     public void getTestGraph() throws Exception
     {
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+      /*  MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get("/graph/gettestgraph");
         request.param("receipeId", "12345");
         request.param("userId","1111");
@@ -266,7 +266,7 @@ public class ReceipeControllerTest {
                  .andExpect(MockMvcResultMatchers.status().isOk());       
         MvcResult  result2 = mockMvc.perform(request).andReturn();
         System.out.println(result2.getResponse().getContentAsString());
-       // JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
+       // JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());*/
     }
     
 }

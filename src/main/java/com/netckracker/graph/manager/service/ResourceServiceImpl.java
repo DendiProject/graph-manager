@@ -54,10 +54,9 @@ public class ResourceServiceImpl implements ResourceService{
     }
 
     @Override
-    public String createNodeResource(String resourceName, String nodeId, String measuring, String resourceOrIngredient) {
+    public String createNodeResource(String resourceName, String nodeId, String resourceOrIngredient) {
         Resources resource=new Resources();
         resource.setName(resourceName);
-        resource.setMeasuring(measuring);       
         resource.setIngredientOrResource(resourceOrIngredient);
         Node node=nodeRepository.findByNodeId(nodeId);
         resource.setNode(node);

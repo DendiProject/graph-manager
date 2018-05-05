@@ -18,4 +18,5 @@ import org.springframework.stereotype.Repository;
 public interface ReceipeVersionRepository extends JpaRepository <ReceipeVersion, String> {
     ReceipeVersion findByVersionId(String versionId);    
     ReceipeVersion findByReceipeAndUserId(Receipe receipe, String userId);
+    ReceipeVersion findByReceipeAndIsMainVersion(Receipe receipe, boolean isMainVersion);
 }

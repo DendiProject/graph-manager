@@ -136,5 +136,6 @@ public class ReceipeServiceImpl implements ReceipeService{
         receipe.setIsCompleted(true);
         receipeRepository.save(receipe);
     }
+
     
 }

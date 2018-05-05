@@ -112,6 +112,12 @@ public class NodeController {
                 GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
             return new ResponseEntity<>(graph, HttpStatus.OK);        
     }
+    @RequestMapping(value = "/graph/getparallelgraph", method = RequestMethod.GET, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<?> getParallelGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
+                GraphDto graph=nodeService.getReceipeParallelGraph(receipeId, userId);
+            return new ResponseEntity<>(graph, HttpStatus.OK);        
+    }
     
     @RequestMapping(value = "/graph/gettestgraph", method = RequestMethod.GET)
     public ResponseEntity<?> getTestGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){

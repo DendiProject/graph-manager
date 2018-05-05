@@ -24,4 +24,5 @@ public interface NodeService {
     public void addNodePicture(String nodeId, String pictureId);
     public List<ResourceDto> getNodesResources(String nodeId, String inputOrOutput, String ingredientOrResource);
     public GraphDto getReceipeTestGraph(String receipeId, String userId);
+    public GraphDto getReceipeParallelGraph(String receipeId, String userId);
 }

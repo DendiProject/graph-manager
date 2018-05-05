@@ -27,6 +27,7 @@ create table NodeResources (
     resource_id varchar(255), 
     node_id varchar(255), 
     version_id varchar(255), 
+    previous_node_id varchar(255), 
     CONSTRAINT noderesources_pkey PRIMARY KEY (node_resource_id)
 );
 
@@ -81,6 +82,7 @@ alter table Node add constraint FK151ij77y0a4tt2wer8adxay4h foreign key (version
 alter table NodeResources add constraint FKq2ke9oxnmh7685mbskwhrptff foreign key (resource_id) references Resources;
 alter table NodeResources add constraint FKsmj1pap8p9dcckopqiwcbbcvy foreign key (node_id) references Node;
 alter table NodeResources add constraint FKfsetiemf0h8b40k0hachxq7fl foreign key (version_id) references ReceipeVersion;
+alter table NodeResources add constraint FKsmj1pap8p9dcckopqiwcbbcva foreign key (previous_node_id) references Node;
 alter table Receipe add constraint FKdas5suiytegofttyi961i2bcw foreign key (catalog_id) references Catalog;
 alter table ReceipeVersion add constraint FKeokmd6bcfe5fgvvx4g8cbc50n foreign key (receipe_id) references Receipe;
 alter table Edges add constraint FKbhrkb857l3ovgv0134skfi9nf foreign key (end_node_id) references Node;

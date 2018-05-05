@@ -6,6 +6,7 @@
 package com.netckracker.graph.manager.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -85,6 +86,31 @@ public class Node implements Serializable {
 
     public void setNodeNumber(int nodeNumber) {
         this.nodeNumber = nodeNumber;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + Objects.hashCode(this.nodeId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Node other = (Node) obj;
+        if (!Objects.equals(this.nodeId, other.nodeId)) {
+            return false;
+        }
+        return true;
     }
     
 }

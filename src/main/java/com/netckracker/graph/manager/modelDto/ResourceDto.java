@@ -12,6 +12,7 @@ package com.netckracker.graph.manager.modelDto;
 public class ResourceDto {
     
     private String resourceId;
+    private String previousNodeId;
     private String name;
     private double resourceNumber;
     public String getResourceId() {
@@ -37,4 +38,13 @@ public class ResourceDto {
     public void setName(String name) {
         this.name = name;
     } 
+
+    public String getPreviousNodeId() {
+        return previousNodeId;
+    }
+
+    public void setPreviousNodeId(String previousNodeId) {
+        this.previousNodeId = previousNodeId;
+    }
+    
 }

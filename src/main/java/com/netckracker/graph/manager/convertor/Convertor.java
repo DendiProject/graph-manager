@@ -81,9 +81,16 @@ public class Convertor {
     
     public ResourceDto convertNodeResourceToDto(NodeResources nodeResource)
     {
-        ResourceDto resourceDto=new ResourceDto();
-        resourceDto.setName(nodeResource.getResource().getName());
-        resourceDto.setResourceId(nodeResource.getResource().getResourceId());
+        ResourceDto resourceDto=new ResourceDto();       
+        if (nodeResource.getResource()!=null)
+        {
+            resourceDto.setName(nodeResource.getResource().getName());
+            resourceDto.setResourceId(nodeResource.getResource().getResourceId());
+        }
+        if (nodeResource.getPreviousNode()!=null)
+        {
+            resourceDto.setPreviousNodeId(nodeResource.getPreviousNode().getNodeId());
+        }
         resourceDto.setResourceNumber(nodeResource.getNumberOfResource());
         return resourceDto;
     }

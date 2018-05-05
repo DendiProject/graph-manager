@@ -31,6 +31,10 @@ public class NodeResources implements Serializable {
     @JoinColumn(name = "node_id")
     private Node node;
     
+    @ManyToOne
+    @JoinColumn(name = "previous_node_id")
+    private Node previousNode;
+    
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "version_id")
     private ReceipeVersion version;
@@ -87,6 +91,14 @@ public class NodeResources implements Serializable {
 
     public void setInputOrOutput(String inputOrOutput) {
         this.inputOutput = inputOrOutput;
+    }
+
+    public Node getPreviousNode() {
+        return previousNode;
+    }
+
+    public void setPreviousNode(Node previousNode) {
+        this.previousNode = previousNode;
     }
     
     

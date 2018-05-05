@@ -59,8 +59,8 @@ public class ResourceController {
     @RequestMapping(value = "/resource/addnoderesource", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<String> addNodeResource(@RequestParam String name, @RequestParam String ingredientOrResource, 
-            @RequestParam String measuring, @RequestParam String nodeId){
-         String resourceId=resourceService.createNodeResource(name, nodeId, measuring, ingredientOrResource);
+            @RequestParam String nodeId){
+         String resourceId=resourceService.createNodeResource(name, nodeId, ingredientOrResource);
      return new ResponseEntity<>(resourceId, HttpStatus.OK);
     }
     
