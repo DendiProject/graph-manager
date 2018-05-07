@@ -3,27 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.netckracker.graph.manager.service;
+package com.netckracker.graph.manager.controller;
 
-import com.netckracker.graph.manager.convertor.Convertor;
+import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.modelDto.GraphDto;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
-import com.netckracker.graph.manager.parallelization.GraphParallelization;
-import com.netckracker.graph.manager.repository.EdgesRepository;
 import com.netckracker.graph.manager.repository.NodeRepository;
-import com.netckracker.graph.manager.repository.NodeResourcesRepository;
-import com.netckracker.graph.manager.repository.ReceipeRepository;
-import com.netckracker.graph.manager.repository.ReceipeVersionRepository;
-import com.netckracker.graph.manager.repository.ResourcesRepository;
+import com.netckracker.graph.manager.service.CatalogService;
+import com.netckracker.graph.manager.service.NodeService;
+import com.netckracker.graph.manager.service.ReceipeService;
+import com.netckracker.graph.manager.service.ResourceService;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.transaction.Transactional;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  *
@@ -31,24 +39,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-@Transactional
-public class NodeServiceTest {
+@WebAppConfiguration
+public class GetParalellGraphTest {
+    private MockMvc mockMvc;
     @Autowired
     private NodeService nodeService;
-    @Autowired
-    private ReceipeVersionRepository versionRepository;
-    @Autowired
-    private ReceipeRepository receipeRepository;
-    @Autowired
-    private NodeResourcesRepository nodeResourcesRepository;
-    @Autowired
+        @Autowired
     private NodeRepository nodeRepository;
-    @Autowired
-    private ResourcesRepository resourcesRepository;
-    @Autowired
-    private EdgesRepository edgesRepository;
-    @Autowired
-    private Convertor convertor;
     @Autowired
     private ReceipeService receipeService;
     @Autowired
@@ -56,17 +53,23 @@ public class NodeServiceTest {
     @Autowired
     private CatalogService catalogService;
     @Autowired
-    private GraphParallelization parallelization;
-    
-    @Test
-    public void getParallelGraphTest()
+    private WebApplicationContext wac;
+    String receipeId;
+    List<String> nodes=new ArrayList<>();
+
+    @Before
+    public void setUp() {
+        mockMvc = webAppContextSetup(wac).build();
+    }
+    @Before
+    public void createReceipeTest()
     {
         String userId="11119";
           
-        /*Создаем каталог и рецепт*/
+                /*Создаем каталог и рецепт*/
         String catalogId=catalogService.createCatalog("Пироги", "description");
         ReceipeDto receipe=receipeService.createReceipe("Шарлотка", "description", catalogId, userId, true);
-        String receipeId=receipe.getReceipeId();
+        receipeId=receipe.getReceipeId();
         
         /*Создаем ингредиенты рецепта*/
         String ingredientId1=resourceService.createResource("Мука", userId, "г", "ingredient", "12345");
@@ -201,7 +204,7 @@ public class NodeServiceTest {
         node4Resource2.setName("Белки с сахаром");
         node4Resource2.setResourceNumber(3);
         ResourceDto node4Resource3=new ResourceDto();
-        node4Resource3.setResourceId(ingredientId2);
+        node4Resource3.setResourceId(ingredientId1);
         node4Resource3.setName("Мука");
         node4Resource3.setResourceNumber(300);
         List<ResourceDto> node4InputResources=Arrays.asList(node4Resource1, node4Resource2, node4Resource3);
@@ -332,17 +335,31 @@ public class NodeServiceTest {
         nodeService.createEdge(nodeId2, nodeId3);
         nodeService.createEdge(nodeId3, nodeId4);
         nodeService.createEdge(nodeId4, nodeId5);
-        nodeService.createEdge(nodeId5, nodeId6);
+        nodeService.createEdge(nodeId5, nodeId7);
         nodeService.createEdge(nodeId6, nodeId7);
         nodeService.createEdge(nodeId7, nodeId8);
         nodeService.createEdge(nodeId8, nodeId9);
         nodeService.createEdge(nodeId9, nodeId10);
         nodeService.createEdge(nodeId10, nodeId11);
+        nodeService.createEdge(nodeId3, nodeId6);
 
-        GraphDto graph=nodeService.getReceipeParallelGraph(receipeId, "1227345");
     }
     
-    
-            
+    @Test
+    public void getParalellGraph() throws Exception
+    {
+        String userId="1841119";
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/graph/getparallelgraph");
+        request.param("receipeId",receipeId);  
+        request.param("userId",userId); 
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);
+        ResultActions result = mockMvc.perform(request)
+                 .andExpect(MockMvcResultMatchers.status().isOk()); 
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+    }
+
+
     
 }

@@ -77,7 +77,7 @@ public class NodeControllerTest {
     public void setUp() {
         mockMvc = webAppContextSetup(wac).build();
     }
-    
+
     @Test
     public void addNodeTest() throws Exception
     {
@@ -99,7 +99,6 @@ public class NodeControllerTest {
     {
         userId="11233";
         String nodeDescription="beat the eggs";
-        //catalogId=catalogService.createCatalog("apple pies", "description");
         ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, true);
         String nodeId=nodeService.createNode(receipe.getReceipeId(), userId);
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -212,5 +211,11 @@ public class NodeControllerTest {
         assertEquals("ingredient Id incorrect", resourceId, jsonResource.getString("resourceId"));
         assertEquals("ingredient name incorrecrt", "milk", jsonResource.getString("name"));
         assertEquals("ingredient number incorrecrt","1.0", jsonResource.getString("resourceNumber"));
+    }
+    
+    @Test
+    public void getReceipeParalellGraph()
+    {
+        
     }
 }

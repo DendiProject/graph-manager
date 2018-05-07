@@ -207,7 +207,7 @@ public class GraphTest {
         node4Resource2.setName("Белки с сахаром");
         node4Resource2.setResourceNumber(3);
         ResourceDto node4Resource3=new ResourceDto();
-        node4Resource3.setResourceId(ingredientId2);
+        node4Resource3.setResourceId(ingredientId1);
         node4Resource3.setName("Мука");
         node4Resource3.setResourceNumber(300);
         List<ResourceDto> node4InputResources=Arrays.asList(node4Resource1, node4Resource2, node4Resource3);
@@ -348,11 +348,9 @@ public class GraphTest {
         
         Receipe findReceipe=receipeRepository.findByReceipeId(receipeId);
         ReceipeVersion version=versionRepository.findByReceipeAndUserId(findReceipe, userId);
-        //nodeGraph.search(version);
         parallelization.paralellGraph(version);
         GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
         Iterator iter=graph.getEdges().iterator();
-        
         while (iter.hasNext())
         {
             EdgeDto edge=(EdgeDto) iter.next();

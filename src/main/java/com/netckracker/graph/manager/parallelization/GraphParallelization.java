@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class GraphParallelization {
     @Autowired
     private BaseHandler handler;
-    
+
 
     public GraphParallelization() {
     }

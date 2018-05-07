@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -159,7 +160,7 @@ public class NodeServiceImpl implements NodeService{
             {
                 Edges edge=edgesRepository.findByStartNodeAndEndNode(nodes.get(i), nodes.get(j));
                 if (edge!=null)
-                {
+                {                    
                     graph.getEdges().add(convertor.convertEgdeToDto(edge));
                 }
                 else 
@@ -331,6 +332,7 @@ public class NodeServiceImpl implements NodeService{
                 copyReceipeVersion(mainVersion, savedVersion);
                 parallelization.paralellGraph(savedVersion);
                 graph=getReceipeGraph(receipe.getReceipeId(), savedVersion.getUserId());
+                return graph;
             } catch (IOException ex) {
                 Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -341,6 +343,7 @@ public class NodeServiceImpl implements NodeService{
         {
             parallelization.paralellGraph(version);
             graph=getReceipeGraph(receipe.getReceipeId(), version.getUserId());
+            return graph;
         }
         return null;
         
@@ -352,6 +355,9 @@ public class NodeServiceImpl implements NodeService{
         Map<Node, Node> oldAndNewNodes=new HashMap<>();
         List<Node> nodes=nodeRepository.findByVersion(fromVersion);
         List<NodeResources> receipeResources=nodeResourcesRepository.findByVersion(fromVersion);
+        Map<NodeResources, NodeResources> oldAndNewResources=new HashMap<>();
+        
+        /*копируем ресурсы рецепта*/
         for (int i=0; i<receipeResources.size(); i++)
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -363,9 +369,13 @@ public class NodeServiceImpl implements NodeService{
             ObjectInputStream ois = new ObjectInputStream(bais);
             NodeResources nodeResource=(NodeResources)ois.readObject();
             nodeResource.setVersion(toVersion);
-            nodeResource.setNodeResourceId(null);
-            nodeResourcesRepository.save(nodeResource);
+            nodeResource.setNodeResourceId(null);     
+            
+            NodeResources saved=nodeResourcesRepository.save(nodeResource);
+            oldAndNewResources.put(receipeResources.get(i), saved);
         }
+        
+        /*копируем ноды*/
         for (int i=0; i<nodes.size(); i++)
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -379,8 +389,16 @@ public class NodeServiceImpl implements NodeService{
             node.setNodeId(null);
             node.setVersion(toVersion);
             Node saved=nodeRepository.save(node);
+            System.out.println(saved.getNodeId());
             oldAndNewNodes.put(nodes.get(i), saved);
+        }
+        
+        /*копируем ресурсы ноды*/
+        List<NodeResources> resources=new ArrayList<>();
+        for (int i=0; i<nodes.size(); i++)
+        {
             List<NodeResources> nodeResources=nodeResourcesRepository.findByNode(nodes.get(i));
+            
             for (int j=0; j<nodeResources.size(); j++)
             {
                 ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
@@ -391,11 +409,25 @@ public class NodeServiceImpl implements NodeService{
                 ByteArrayInputStream bais1= new ByteArrayInputStream(baos1.toByteArray());
                 ObjectInputStream ois1 = new ObjectInputStream(bais1);
                 NodeResources nodeResource=(NodeResources)ois1.readObject();
-                nodeResource.setNode(saved);
+                if (nodeResource.getNode()!=null)
+                {
+                    nodeResource.setNode(oldAndNewNodes.get(nodes.get(i)));                              
+                }
+                if (nodeResource.getVersion()!=null)
+                {
+                        nodeResource.setVersion(toVersion);
+                }
+                if (nodeResource.getPreviousNode()!=null)
+                {
+                    nodeResource.setPreviousNode(oldAndNewNodes.get(nodeResource.getPreviousNode()));
+                }
                 nodeResource.setNodeResourceId(null);
-                nodeResourcesRepository.save(nodeResource);
+                NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                resources.add(saved);
             }
         }
+
+        /*копируем связи*/
         for(int i=0; i<nodes.size();i++)
         {
             for (int j=0;j<nodes.size(); j++)
@@ -419,9 +451,5 @@ public class NodeServiceImpl implements NodeService{
                 }                
             }            
         }
-        
-        List<Node> fromNode=nodeRepository.findByVersion(fromVersion);
-        List<Node> toNode=nodeRepository.findByVersion(toVersion);
-        System.out.println("SIZE: "+fromNode.size()+" : "+toNode.size());
     }
 }
