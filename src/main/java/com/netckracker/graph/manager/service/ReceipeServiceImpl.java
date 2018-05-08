@@ -66,11 +66,11 @@ public class ReceipeServiceImpl implements ReceipeService{
 
     @Override
     @Transactional
-    public ReceipeDto createReceipe(String name, String description, String catalogId, 
+    public ReceipeDto createReceipe(String name, String descriptionId, String catalogId, 
             String userId, boolean isPublic) {
         Receipe receipe=new Receipe();
         receipe.setName(name);
-        receipe.setDescription(description);
+        receipe.setDescriptionId(descriptionId);
         receipe.setIsCompleted(false);
         receipe.setIsPublic(isPublic);
         receipe.setIsDeleted(false);

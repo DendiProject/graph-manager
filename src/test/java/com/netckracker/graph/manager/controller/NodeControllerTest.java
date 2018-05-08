@@ -109,7 +109,7 @@ public class NodeControllerTest {
         ResultActions result = mockMvc.perform(request)
                  .andExpect(MockMvcResultMatchers.status().isOk()); 
         Node node=nodeRepository.findByNodeId(nodeId);
-        assertEquals("description incorrecrt",nodeDescription, node.getDescription());
+        assertEquals("description incorrecrt",nodeDescription, node.getDescriptionId());
         
     }
     @Test

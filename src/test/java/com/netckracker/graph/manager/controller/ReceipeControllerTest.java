@@ -77,7 +77,7 @@ public class ReceipeControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/receipe/addreceipe");
         request.param("name", name);
-        request.param("description",description );
+        request.param("descriptionId",description );
         request.param("userId", userId);
         request.param("catalogId", catalogId);
         request.param("isPublic", "true");
@@ -91,7 +91,7 @@ public class ReceipeControllerTest {
       Receipe receipe=receipeRepository.findByReceipeId(receipeId);
       assertEquals("receipeId incorrecrt", receipe.getReceipeId(), receipeId);
       assertEquals("receipe name incorrecrt", name, receipe.getName());
-      assertEquals("receipe description incorrecrt", description, receipe.getDescription());
+      assertEquals("receipe description incorrecrt", description, receipe.getDescriptionId());
       assertEquals("receipe catalogId incorrecrt", catalogId, receipe.getCatalog().getCatalogId());
       assertEquals("receipe isPublic incorrecrt", isPublic, receipe.isIsPublic());
     }
@@ -113,7 +113,7 @@ public class ReceipeControllerTest {
         receipeId=jsonObject.get("receipeId").toString();
         assertEquals("receipeId incorrecrt", receipe.getReceipeId(), receipeId);
         assertEquals("receipe name incorrecrt", name, jsonObject.get("name").toString());
-        assertEquals("receipe description incorrecrt", description, jsonObject.get("description").toString());
+        assertEquals("receipe description incorrecrt", description, jsonObject.get("descriptionId").toString());
         assertEquals("receipe isPublic incorrecrt", String.valueOf(isPublic), jsonObject.get("isPublic").toString());
         assertEquals("receipe isPublic incorrecrt", String.valueOf(isCompleted), jsonObject.get("isCompleted").toString());
         assertEquals("receipe isDeleted incorrecrt", String.valueOf(isDeleted), jsonObject.get("isDeleted").toString());

@@ -28,18 +28,34 @@ public class Node implements Serializable {
     @JoinColumn(name = "version_id")
     private ReceipeVersion version;
     
-    @Column(name = "description") 
-    private String description;
+    @Column(name = "description_id") 
+    private String descriptionId;
+    
+    @Column(name = "label") 
+    private String label;
     
     @Column(name = "picture_id") 
     private String pictureId;
-    
-    @Column(name = "person_number") 
-    private int personNumber;
-        
-    @Column(name = "node_number") 
-    private int nodeNumber;
 
+    public String getDescriptionId() {
+        return descriptionId;
+    }
+
+    public void setDescriptionId(String descriptionId) {
+        this.descriptionId = descriptionId;
+    }
+    
+
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    
     public String getNodeId() {
         return nodeId;
     }
@@ -56,13 +72,6 @@ public class Node implements Serializable {
         this.version = version;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getPictureId() {
         return pictureId;
@@ -72,21 +81,6 @@ public class Node implements Serializable {
         this.pictureId = pictureId;
     }
 
-    public int getPersonNumber() {
-        return personNumber;
-    }
-
-    public void setPersonNumber(int personNumber) {
-        this.personNumber = personNumber;
-    }
-
-    public int getNodeNumber() {
-        return nodeNumber;
-    }
-
-    public void setNodeNumber(int nodeNumber) {
-        this.nodeNumber = nodeNumber;
-    }
 
     @Override
     public int hashCode() {

@@ -20,9 +20,10 @@ WITH (
 
 create table Node (
     node_id varchar(255) not null, 
-    description varchar(255), name varchar(255), 
-    node_number integer, person_number integer, 
-    picture_id varchar(255), version_id varchar(255), 
+    description_id varchar(255), 
+    label varchar(255),  
+    picture_id varchar(255), 
+    version_id varchar(255), 
     CONSTRAINT node_pkey PRIMARY KEY (node_id)
 )
 WITH (
@@ -46,7 +47,7 @@ WITH (
 
 create table Receipe (
     receipe_id varchar(255) not null, 
-    description varchar(255), 
+    description_id varchar(255), 
     is_completed boolean, 
     is_deleted boolean, 
     is_public boolean, 

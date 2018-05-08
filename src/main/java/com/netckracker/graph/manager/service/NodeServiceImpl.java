@@ -120,11 +120,11 @@ public class NodeServiceImpl implements NodeService{
 
     @Override
     @Transactional
-    public void addNodeDescription(String nodeId, String description) {
+    public void addNodeDescription(String nodeId, String descriptionId) {
         Node node=nodeRepository.findByNodeId(nodeId);
         if (node!=null)
         {
-            node.setDescription(description);
+            node.setDescriptionId(descriptionId);
             nodeRepository.save(node);
         }
     }
@@ -450,6 +450,17 @@ public class NodeServiceImpl implements NodeService{
                     }
                 }                
             }            
+        }
+    }
+
+    @Transactional
+    @Override
+    public void addNodeLabel(String nodeId, String label) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        if (node!=null)
+        {
+            node.setLabel(label);
+            nodeRepository.save(node);
         }
     }
 }

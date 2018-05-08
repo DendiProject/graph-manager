@@ -56,6 +56,12 @@ public class NodeController {
         nodeService.addNodeDescription(nodeId, description);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+        @RequestMapping(value = "/node/addnodedelabel/{nodeId}", method = RequestMethod.POST, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<Void> addNodeLabel(@PathVariable String nodeId, @RequestParam String label){
+        nodeService.addNodeLabel(nodeId, label);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @RequestMapping(value = "/node/addnodepicture/{nodeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<Void> addNodePicture(@PathVariable String nodeId, @RequestParam String pictureId){

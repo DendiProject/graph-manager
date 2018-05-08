@@ -356,7 +356,7 @@ public class GraphTest {
             EdgeDto edge=(EdgeDto) iter.next();
             Node startNode=nodeRepository.findByNodeId(edge.getStartNodeId());
             Node endNode=nodeRepository.findByNodeId(edge.getEndNodeId());
-            System.out.println(startNode.getDescription()+" : "+endNode.getDescription());
+            System.out.println(startNode.getDescriptionId()+" : "+endNode.getDescriptionId());
         }
     }
 

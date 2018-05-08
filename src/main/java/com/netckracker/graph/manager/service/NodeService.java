@@ -16,7 +16,8 @@ import java.util.List;
 public interface NodeService {
     public String createNode(String receipeId, String userId);
     public void createEdge(String startNodeId, String endNodeId);
-    public void addNodeDescription(String nodeId, String description);
+    public void addNodeDescription(String nodeId, String descriptionId);
+    public void addNodeLabel(String nodeId, String label);
     public void addInputOrOutputResourcesToNode(String nodeId , List<ResourceDto> resources , String inputOrOutput);
     public GraphDto getReceipeGraph(String receipeId, String userId);
     public void deleteNode(String nodeId);

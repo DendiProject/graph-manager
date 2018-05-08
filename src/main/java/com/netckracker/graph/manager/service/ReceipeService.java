@@ -16,7 +16,7 @@ import java.util.List;
  */
 public interface ReceipeService {
     public void deleteReceipe( String receipeId, String userId);
-    public ReceipeDto createReceipe (String name, String description, String catalogId, 
+    public ReceipeDto createReceipe (String name, String descriptionId, String catalogId, 
             String userId, boolean isPublic);    
     public String addReceipeResources(String receipeId,String userId, String resourceId, double resourceNumber);
     public List<ReceipeDto> getPublicCompletedReceipes(int page, int size);
