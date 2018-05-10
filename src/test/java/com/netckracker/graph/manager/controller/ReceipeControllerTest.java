@@ -182,7 +182,7 @@ public class ReceipeControllerTest {
 
     }
     
-    @Test
+    /*@Test
     public void getPublicAndCompletedReceipesTest() throws Exception
     {
         ReceipeDto receipe1=receipeService.createReceipe(name, description, catalogId, userId, true);
@@ -199,7 +199,7 @@ public class ReceipeControllerTest {
         MvcResult  result = mockMvc.perform(request).andReturn(); 
         String expected = "[{receipeId:"+receipe1.getReceipeId()+"},{receipeId:"+receipe2.getReceipeId()+"}]";
        JSONAssert.assertEquals( expected, result.getResponse().getContentAsString(), false);
-    }
+    }*/
     
     @Test 
     public void getReceipeByCatalogTest() throws Exception
