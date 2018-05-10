@@ -7,6 +7,7 @@ package com.netckracker.graph.manager.controller;
 
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.TagsDto;
+import com.netckracker.graph.manager.service.ReceipeService;
 import com.netckracker.graph.manager.service.TagService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class TagController {
-     @Autowired
+    @Autowired
     private TagService tagService;
+    @Autowired
+    private ReceipeService receipeService;
      
      @RequestMapping(value = "/receipe/getbytag/{tagName}", params = { "page", "size" },method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public  ResponseEntity<?> getReceipesByTag(@PathVariable  String  tagName, @RequestParam( "page" ) int page, @RequestParam( "size" ) int size ){
+    public  ResponseEntity<?> getReceipesByTag(@PathVariable  String  tagName, @RequestParam(required=false, value="page" ) int page,
+           @RequestParam(required=false, value="size" ) int size ){
         
         if (size==0&&page==0)
         {
@@ -49,13 +53,18 @@ public class TagController {
     @RequestMapping(value = "/receipe/addtag/{receipeId}", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<Void> addTagToReceipe(@PathVariable  String receipeId,@RequestParam  String tagName){
-        tagService.addTag(receipeId, tagName);       
-        return new ResponseEntity<>(HttpStatus.OK);
+        if (receipeService.isReceipeExcist(receipeId)==true)
+        {
+            tagService.addTag(receipeId, tagName);       
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
     @RequestMapping(value = "/tag/getbyletters/{letters}", params = { "page", "size" },method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public  ResponseEntity<?> getTagsByLetters(@PathVariable  String  letters, @RequestParam( "page" ) int page, @RequestParam( "size" ) int size ){
+    public  ResponseEntity<?> getTagsByLetters(@PathVariable  String  letters, @RequestParam(required=false, value="page" ) int page,
+           @RequestParam(required=false, value="size" ) int size  ){
         
         if (size==0&&page==0)
         {

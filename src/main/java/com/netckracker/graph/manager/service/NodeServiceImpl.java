@@ -67,16 +67,26 @@ public class NodeServiceImpl implements NodeService{
     private CatalogService catalogService;
     @Autowired
     private GraphParallelization parallelization;
+    @Autowired
+    private TopOfReceipesService topService;
     
     @Override
     @Transactional
     public String createNode(String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
-        Node node=new Node();
-        node.setVersion(version);
-        Node savedNode=nodeRepository.save(node);
-        return savedNode.getNodeId();
+        if (receipe!=null)
+        {
+            ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version!=null)
+            {
+                Node node=new Node();
+                node.setVersion(version);
+                Node savedNode=nodeRepository.save(node);
+                return savedNode.getNodeId();
+            }
+            else return null;
+        }        
+        else return null;
     }
 
     @Override
@@ -84,38 +94,44 @@ public class NodeServiceImpl implements NodeService{
     public void createEdge(String startNodeId, String endNodeId) {
         Node startNode=nodeRepository.findByNodeId(startNodeId);
         Node endNode=nodeRepository.findByNodeId(endNodeId);
-        Edges edge1=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
-        Edges edge2=edgesRepository.findByStartNodeAndEndNode(endNode, startNode);
-        if (edge1==null&&edge2==null){
-            Edges edge=new Edges();
-            edge.setStartNode(startNode);
-            edge.setEndNode(endNode);
-            edgesRepository.save(edge);
-        }        
+        if (startNode!=null&&endNode!=null)
+        {
+            Edges edge1=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
+            Edges edge2=edgesRepository.findByStartNodeAndEndNode(endNode, startNode);
+            if (edge1==null&&edge2==null){
+                Edges edge=new Edges();
+                edge.setStartNode(startNode);
+                edge.setEndNode(endNode);
+                edgesRepository.save(edge);
+            }   
+        }             
     }
 
     @Override
     @Transactional
     public void addInputOrOutputResourcesToNode(String nodeId, List<ResourceDto> resources, String inputOrOutput) {        
-        Node node=nodeRepository.findByNodeId(nodeId);        
-        for (int i=0; i<resources.size(); i++)
+        Node node=nodeRepository.findByNodeId(nodeId);    
+        if (node!=null)
         {
-            NodeResources nodeResource=new NodeResources();
-            if (resources.get(i).getResourceId()!=null)
+            for (int i=0; i<resources.size(); i++)
             {
-                Resources resource=resourcesRepository.findByResourceId(resources.get(i).getResourceId());
-                nodeResource.setResource(resource);
-            }
-            if (resources.get(i).getPreviousNodeId()!=null)
-            {
-                Node previousNode=nodeRepository.findByNodeId(resources.get(i).getPreviousNodeId());
-                nodeResource.setPreviousNode(previousNode);
-            }            
-            nodeResource.setInputOrOutput(inputOrOutput);
-            nodeResource.setNode(node);            
-            nodeResource.setNumberOfResource(resources.get(i).getResourceNumber());
-            nodeResourcesRepository.save(nodeResource);
-        }      
+                NodeResources nodeResource=new NodeResources();
+                if (resources.get(i).getResourceId()!=null)
+                {
+                    Resources resource=resourcesRepository.findByResourceId(resources.get(i).getResourceId());
+                    nodeResource.setResource(resource);
+                }
+                if (resources.get(i).getPreviousNodeId()!=null)
+                {
+                    Node previousNode=nodeRepository.findByNodeId(resources.get(i).getPreviousNodeId());
+                    nodeResource.setPreviousNode(previousNode);
+                }            
+                nodeResource.setInputOrOutput(inputOrOutput);
+                nodeResource.setNode(node);            
+                nodeResource.setNumberOfResource(resources.get(i).getResourceNumber());
+                nodeResourcesRepository.save(nodeResource);
+            }      
+        }        
    }    
 
     @Override
@@ -132,7 +148,14 @@ public class NodeServiceImpl implements NodeService{
     @Override
     public GraphDto getReceipeGraph(String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            topService.increaseCounter(receipe, userId);
         ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
+        if (version==null)
+        {
+            version=versionRepository.findByReceipeAndIsMainVersion(receipe, true);
+        }
         GraphDto graph=new GraphDto();
         graph.setReceipeName(receipe.getName());
         List<Node> nodes=nodeRepository.findByVersion(version);
@@ -174,6 +197,8 @@ public class NodeServiceImpl implements NodeService{
             }            
         }        
         return graph;
+        }
+        else return null;
     }
 
     @Override
@@ -191,17 +216,20 @@ public class NodeServiceImpl implements NodeService{
     public void deleteEdge(String startNodeId, String endNodeId) {
         Node startNode=nodeRepository.findByNodeId(startNodeId);
         Node endNode=nodeRepository.findByNodeId(endNodeId);
-        Edges edge=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
-        if (edge!=null)
+        if (startNode!=null&&endNode!=null)
         {
-            edgesRepository.delete(edge);
-        }
-        else 
-        {
-            edge=edgesRepository.findByStartNodeAndEndNode(endNode, startNode);
+            Edges edge=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
             if (edge!=null)
+            {
                 edgesRepository.delete(edge);
-        }
+            }
+            else 
+            {
+                edge=edgesRepository.findByStartNodeAndEndNode(endNode, startNode);
+                if (edge!=null)
+                    edgesRepository.delete(edge);
+            }
+        }        
     } 
 
     @Override
@@ -319,38 +347,46 @@ public class NodeServiceImpl implements NodeService{
     public GraphDto getReceipeParallelGraph(String receipeId, String userId) {
         GraphDto graph;
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version =versionRepository.findByReceipeAndUserId(receipe, userId);
-        if (version==null)
+        if (receipe!=null)
         {
-            ReceipeVersion mainVersion=versionRepository.findByReceipeAndIsMainVersion(receipe, true);           
-            ReceipeVersion newVersion=new ReceipeVersion();
-            newVersion.setIsMainVersion(false);
-            newVersion.setUserId(userId);
-            newVersion.setReceipe(receipe);
-            ReceipeVersion savedVersion=versionRepository.save(newVersion);
-            try {
-                copyReceipeVersion(mainVersion, savedVersion);
-                parallelization.paralellGraph(savedVersion);
-                graph=getReceipeGraph(receipe.getReceipeId(), savedVersion.getUserId());
-                return graph;
-            } catch (IOException ex) {
-                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            ReceipeVersion version =versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version==null)
+            {
+                ReceipeVersion mainVersion=versionRepository.findByReceipeAndIsMainVersion(receipe, true);           
+                ReceipeVersion newVersion=new ReceipeVersion();
+                newVersion.setIsMainVersion(false);
+                newVersion.setUserId(userId);
+                newVersion.setReceipe(receipe);
+                ReceipeVersion savedVersion=versionRepository.save(newVersion);
+                    copyReceipeVersion(mainVersion, savedVersion);
+                    if (savedVersion.isIsParalell()==false)
+                    {
+                        parallelization.paralellGraph(savedVersion);
+                        savedVersion.setIsParalell(true);
+                        versionRepository.save(savedVersion);
+                    }                
+                    graph=getReceipeGraph(receipe.getReceipeId(), savedVersion.getUserId());
+                    return graph;
             }
-        }
-        else 
-        {
-            parallelization.paralellGraph(version);
-            graph=getReceipeGraph(receipe.getReceipeId(), version.getUserId());
-            return graph;
-        }
-        return null;
-        
+            else 
+            {
+                if (version.isIsParalell()==false)
+                {
+                     parallelization.paralellGraph(version);
+                     version.setIsParalell(true);
+                     versionRepository.save(version);
+                }
+
+                graph=getReceipeGraph(receipe.getReceipeId(), version.getUserId());
+                return graph;
+            }            
+        }    
+        else return null;
     }
     
+    @Override
     @Transactional
-    private void copyReceipeVersion(ReceipeVersion fromVersion, ReceipeVersion toVersion) throws IOException, ClassNotFoundException
+    public void copyReceipeVersion(ReceipeVersion fromVersion, ReceipeVersion toVersion) 
     {
         Map<Node, Node> oldAndNewNodes=new HashMap<>();
         List<Node> nodes=nodeRepository.findByVersion(fromVersion);
@@ -360,37 +396,55 @@ public class NodeServiceImpl implements NodeService{
         /*копируем ресурсы рецепта*/
         for (int i=0; i<receipeResources.size(); i++)
         {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream ous = new ObjectOutputStream(baos);
-            ous.writeObject(receipeResources.get(i));
-            ous.close();
-
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            NodeResources nodeResource=(NodeResources)ois.readObject();
-            nodeResource.setVersion(toVersion);
-            nodeResource.setNodeResourceId(null);     
-            
-            NodeResources saved=nodeResourcesRepository.save(nodeResource);
-            oldAndNewResources.put(receipeResources.get(i), saved);
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream ous = new ObjectOutputStream(baos);
+                ous.writeObject(receipeResources.get(i));
+                ous.close();
+                
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                NodeResources nodeResource=(NodeResources)ois.readObject();
+                nodeResource.setVersion(toVersion);
+                nodeResource.setNodeResourceId(null);
+                
+                NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                oldAndNewResources.put(receipeResources.get(i), saved);
+            } catch (IOException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         /*копируем ноды*/
         for (int i=0; i<nodes.size(); i++)
         {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream ous = new ObjectOutputStream(baos);
-            ous.writeObject(nodes.get(i));
-            ous.close();
-
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            Node node=(Node)ois.readObject();
-            node.setNodeId(null);
-            node.setVersion(toVersion);
-            Node saved=nodeRepository.save(node);
-            System.out.println(saved.getNodeId());
-            oldAndNewNodes.put(nodes.get(i), saved);
+            ObjectOutputStream ous = null;
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ous = new ObjectOutputStream(baos);
+                ous.writeObject(nodes.get(i));
+                ous.close();
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                Node node=(Node)ois.readObject();
+                node.setNodeId(null);
+                node.setVersion(toVersion);
+                Node saved=nodeRepository.save(node);
+                System.out.println(saved.getNodeId());
+                oldAndNewNodes.put(nodes.get(i), saved);
+            } catch (IOException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    ous.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
         /*копируем ресурсы ноды*/
@@ -401,29 +455,38 @@ public class NodeServiceImpl implements NodeService{
             
             for (int j=0; j<nodeResources.size(); j++)
             {
-                ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-                ObjectOutputStream ous1 = new ObjectOutputStream(baos1);
-                ous1.writeObject(nodeResources.get(j));
-                ous1.close();
-
-                ByteArrayInputStream bais1= new ByteArrayInputStream(baos1.toByteArray());
-                ObjectInputStream ois1 = new ObjectInputStream(bais1);
-                NodeResources nodeResource=(NodeResources)ois1.readObject();
-                if (nodeResource.getNode()!=null)
-                {
-                    nodeResource.setNode(oldAndNewNodes.get(nodes.get(i)));                              
-                }
-                if (nodeResource.getVersion()!=null)
-                {
+                ObjectOutputStream ous1 = null;
+                try {
+                    ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+                    ous1 = new ObjectOutputStream(baos1);
+                    ous1.writeObject(nodeResources.get(j));
+                    ous1.close();
+                    ByteArrayInputStream bais1= new ByteArrayInputStream(baos1.toByteArray());
+                    ObjectInputStream ois1 = new ObjectInputStream(bais1);
+                    NodeResources nodeResource=(NodeResources)ois1.readObject();
+                    if (nodeResource.getNode()!=null)
+                    {
+                        nodeResource.setNode(oldAndNewNodes.get(nodes.get(i)));
+                    }   if (nodeResource.getVersion()!=null)
+                    {
                         nodeResource.setVersion(toVersion);
+                    }   if (nodeResource.getPreviousNode()!=null)
+                    {
+                        nodeResource.setPreviousNode(oldAndNewNodes.get(nodeResource.getPreviousNode()));
+                    }   nodeResource.setNodeResourceId(null);
+                    NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                    resources.add(saved);
+                } catch (IOException ex) {
+                    Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        ous1.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
-                if (nodeResource.getPreviousNode()!=null)
-                {
-                    nodeResource.setPreviousNode(oldAndNewNodes.get(nodeResource.getPreviousNode()));
-                }
-                nodeResource.setNodeResourceId(null);
-                NodeResources saved=nodeResourcesRepository.save(nodeResource);
-                resources.add(saved);
             }
         }
 
@@ -463,4 +526,15 @@ public class NodeServiceImpl implements NodeService{
             nodeRepository.save(node);
         }
     }
+
+    @Override
+    public boolean isNodeExcist(String nodeId) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        if (node!=null)
+        {
+            return true;
+        }
+        else return false;
+    }
+    
 }

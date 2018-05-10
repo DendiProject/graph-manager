@@ -33,6 +33,16 @@ public class ReceipeVersion implements Serializable {
     @Column(name = "is_main_version") 
     private boolean isMainVersion;
     
+    @Column(name = "is_paralell") 
+    private boolean isParalell;
+
+    public boolean isIsParalell() {
+        return isParalell;
+    }
+
+    public void setIsParalell(boolean isParalell) {
+        this.isParalell = isParalell;
+    }
 
     public String getVersionId() {
         return versionId;

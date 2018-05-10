@@ -7,6 +7,7 @@ package com.netckracker.graph.manager.controller;
 
 
 import com.netckracker.graph.manager.modelDto.ResourceNameDto;
+import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ResourceService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private NodeService nodeService;
     
     @RequestMapping(value = "/resource/getbyfirstletters/{letters}", params = { "page", "size" },method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
@@ -60,8 +63,12 @@ public class ResourceController {
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<String> addNodeResource(@RequestParam String name, @RequestParam String ingredientOrResource, 
             @RequestParam String nodeId){
-         String resourceId=resourceService.createNodeResource(name, nodeId, ingredientOrResource);
-     return new ResponseEntity<>(resourceId, HttpStatus.OK);
+        String resourceId=resourceService.createNodeResource(name, nodeId, ingredientOrResource);
+        if (resourceId!=null)
+        {
+            return new ResponseEntity<>(resourceId, HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
     

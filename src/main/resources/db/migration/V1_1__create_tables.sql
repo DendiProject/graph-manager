@@ -7,6 +7,16 @@ create table Catalog
 WITH (
     OIDS = FALSE
 );
+create table TopOfReceipes
+(top_id varchar(255) not null,
+ user_id varchar(255) not null,
+ receipe_id varchar(255) not null,
+ frequency_of_use int,
+CONSTRAINT top_pkey PRIMARY KEY (top_id)
+)
+WITH (
+    OIDS = FALSE
+);
 
 create table Edges (
 edge_id varchar(255) not null, 
@@ -64,6 +74,7 @@ WITH (
 create table ReceipeVersion (
 version_id varchar(255) not null, 
 is_main_version boolean, 
+is_paralell boolean,
 user_id varchar(255), 
 receipe_id varchar(255), 
 CONSTRAINT version_pkey PRIMARY KEY (version_id)
@@ -118,6 +129,7 @@ alter table Edges add constraint FKjq0a1a85w4edxbrdgmo392ey7 foreign key (start_
 alter table UserStep add constraint FK4yj9gl2grk3pasi0j4a21s2q3 foreign key (version_id) references ReceipeVersion;
 alter table UserStep add constraint FKt69hxm5viytprnfpfovcxwr7c foreign key (node_id) references Node;
 alter table Resources add constraint nodeIdFK foreign key (node_id) references Node;
+alter table TopOfReceipes add constraint receipeIdFK foreign key (receipe_id) references Receipe;
 
 CREATE TABLE Receipe_tagList 
     (Receipe_receipe_id varchar(255) not null, 

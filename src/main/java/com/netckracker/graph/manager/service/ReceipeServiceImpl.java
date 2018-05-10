@@ -7,7 +7,6 @@ package com.netckracker.graph.manager.service;
 
 import com.netckracker.graph.manager.convertor.Convertor;
 import com.netckracker.graph.manager.model.Catalog;
-import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.model.NodeResources;
 import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.ReceipeVersion;
@@ -43,25 +42,30 @@ public class ReceipeServiceImpl implements ReceipeService{
     @Autowired
     private ResourcesRepository resourcesRepository;
     @Autowired
+    private NodeService nodeService;
+    @Autowired
     private Convertor convertor;
 
     @Override
     @Transactional
     public void deleteReceipe(String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion find=versionRepository.findByReceipeAndUserId(receipe, userId);
-        if (find!=null)
+        if (receipe!=null)
         {
-           if (find.isIsMainVersion()==true)
-           {
-               receipe.setIsDeleted(true);
-               receipeRepository.save(receipe);
-           }
-           else 
-           {
-               versionRepository.delete(find);
-           }
-        }        
+            ReceipeVersion find=versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (find!=null)
+            {
+               if (find.isIsMainVersion()==true)
+               {
+                   receipe.setIsDeleted(true);
+                   receipeRepository.save(receipe);
+               }
+               else 
+               {
+                   versionRepository.delete(find);
+               }
+            }
+        }                
     }
 
     @Override
@@ -75,12 +79,15 @@ public class ReceipeServiceImpl implements ReceipeService{
         receipe.setIsPublic(isPublic);
         receipe.setIsDeleted(false);
         Catalog find=catalogRepository.findByCatalogId(catalogId);
-        receipe.setCatalog(find);
+        if (find!=null)
+        {
+          receipe.setCatalog(find);  
+        }        
         Receipe saved=receipeRepository.save(receipe);
         
         ReceipeVersion version=new ReceipeVersion();        
         version.setIsMainVersion(true);
-        
+        version.setIsParalell(false);        
         version.setUserId(userId);
         version.setReceipe(saved);
         versionRepository.save(version);
@@ -94,15 +101,23 @@ public class ReceipeServiceImpl implements ReceipeService{
     public String addReceipeResources(String receipeId,String userId, String resourceId, double resourceNumber) {
         
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version=versionRepository.findByReceipeAndUserId(receipe, userId);
-        Resources resource=resourcesRepository.findByResourceId(resourceId);        
-        NodeResources nodeResource=new NodeResources();
-        nodeResource.setResource(resource);
-        nodeResource.setVersion(version);
-        nodeResource.setNumberOfResource(resourceNumber);  
-        
-        NodeResources saved=nodeResourcesRepository.save(nodeResource);
-        return saved.getNodeResourceId();
+        if (receipe!=null)
+        {
+            ReceipeVersion version=versionRepository.findByReceipeAndUserId(receipe, userId);
+            Resources resource=resourcesRepository.findByResourceId(resourceId);        
+            if (version!=null&&resource!=null)
+            {
+                NodeResources nodeResource=new NodeResources();
+                nodeResource.setResource(resource);
+                nodeResource.setVersion(version);
+                nodeResource.setNumberOfResource(resourceNumber);  
+
+                NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                return saved.getNodeResourceId();
+            }
+            else return null;
+        }
+        else return null;        
     }
 
     @Override
@@ -117,25 +132,65 @@ public class ReceipeServiceImpl implements ReceipeService{
     @Override
     public ReceipeInformationDto getReceipeInformation(String receipeId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            return convertor.convertReceipeToReceipeInformationDto(receipe);
+        }
+        else return null;        
+    }
     
-        return convertor.convertReceipeToReceipeInformationDto(receipe);
+    @Override
+    @Transactional
+    public void createReceipeVersion(String receipeId, String userId)
+    {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            ReceipeVersion version =versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version==null)
+            {
+                ReceipeVersion mainVersion=versionRepository.findByReceipeAndIsMainVersion(receipe, true);           
+                ReceipeVersion newVersion=new ReceipeVersion();
+                newVersion.setIsMainVersion(false);
+                newVersion.setUserId(userId);
+                newVersion.setReceipe(receipe);
+                ReceipeVersion savedVersion=versionRepository.save(newVersion);
+                nodeService.copyReceipeVersion(mainVersion, savedVersion);
+            }
+        }             
     }
 
     @Override
     public List<ReceipeDto> getReceipesByCatalog(String catalogId, int page, int size) {
         Catalog catalog=catalogRepository.findByCatalogId(catalogId);
-        List<Receipe> receipes=receipeRepository.findByIsPublicAndIsCompletedAndCatalog(true, true, catalog,new PageRequest(page, size)).getContent();
+        if (catalog!=null)
+        {
+            List<Receipe> receipes=receipeRepository.findByIsPublicAndIsCompletedAndCatalog(true, true, catalog,new PageRequest(page, size)).getContent();
             return receipes.stream()
                .map(receipe->convertor.convertReceipeToDto(receipe))
                .collect(Collectors.toList());
+        }
+        else return null;        
     }
 
+    @Transactional
     @Override
     public void setCompleted(String receipeId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        receipe.setIsCompleted(true);
-        receipeRepository.save(receipe);
-    }
+        if (receipe!=null)
+        {
+            receipe.setIsCompleted(true);
+            receipeRepository.save(receipe);
+        }
+    }      
 
-    
+    @Override
+    public boolean isReceipeExcist(String receipeId) {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            return true;
+        }
+        else return false;
+    }
 }

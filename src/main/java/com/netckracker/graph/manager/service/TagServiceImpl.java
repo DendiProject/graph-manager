@@ -36,19 +36,22 @@ public class TagServiceImpl implements TagService{
     @Transactional
     public void addTag(String receipeId, String tagName) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        Tags tag=tagRepository.findByName(tagName);
-        if (tag==null)
+        if (receipe!=null)
         {
-            Tags newTag=new Tags();
-            newTag.setName(tagName);
-            Tags saved=tagRepository.save(newTag);
-            receipe.getTagList().add(saved);            
-        }
-        else 
-        {
-             receipe.getTagList().add(tag); 
-        }
-        receipeRepository.save(receipe);
+            Tags tag=tagRepository.findByName(tagName);
+            if (tag==null)
+            {
+                Tags newTag=new Tags();
+                newTag.setName(tagName);
+                Tags saved=tagRepository.save(newTag);
+                receipe.getTagList().add(saved);            
+            }
+            else 
+            {
+                 receipe.getTagList().add(tag); 
+            }
+            receipeRepository.save(receipe);
+        }        
     }
 
     @Override

@@ -23,5 +23,7 @@ public interface ReceipeService {
     public ReceipeInformationDto  getReceipeInformation(String receipeId);
     public List<ReceipeDto> getReceipesByCatalog(String catalogId, int page, int size);
     public void setCompleted(String receipeId);
+    public void createReceipeVersion(String receipeId,String userId);
+    public boolean isReceipeExcist(String receipeId);
     
 }

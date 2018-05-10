@@ -50,22 +50,50 @@ public class ReceipeController {
     @RequestMapping(value = "/receipe/setcompleted/{receipeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<Void> setReceipeCompleted(@PathVariable   String receipeId){
-        receipeService.setCompleted(receipeId);
-        return new ResponseEntity<>( HttpStatus.OK);
+        if (receipeService.isReceipeExcist(receipeId)==true)
+        {
+            receipeService.setCompleted(receipeId);
+            return new ResponseEntity<>( HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);        
     }
     
     @RequestMapping(value = "/receipe/delete/{receipeId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Void> deleteNode(@PathVariable ("receipeId") String receipeId, @RequestParam String userId) throws InterruptedException{
-       receipeService.deleteReceipe(receipeId, userId);
-       return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Void> deleteReceipe(@PathVariable ("receipeId") String receipeId, @RequestParam String userId) throws InterruptedException{
+       if (receipeService.isReceipeExcist(receipeId)==true)
+        {
+            receipeService.deleteReceipe(receipeId, userId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+       else return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
     }
+    
+    @RequestMapping(value = "/receipe/createversion/{receipeId}", method = RequestMethod.POST, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<Void> createReceipeVersion (@PathVariable   String receipeId, @RequestParam String userId){
+        if (receipeService.isReceipeExcist(receipeId)==true)
+        {
+            receipeService.createReceipeVersion(receipeId, userId);
+            return new ResponseEntity<>( HttpStatus.OK);
+        }
+       else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+    
 
     @RequestMapping(value = "/receipe/addreceiperesources/{receipeId}", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> addReceipeResource(@PathVariable ("receipeId") String receipeId, 
             @RequestParam("userId")  String userId, @RequestParam ("resourceId") String resourceId, @RequestParam ("resourceNumber") double resourceNumber){
-         String receipeResource=receipeService.addReceipeResources(receipeId, userId, resourceId, resourceNumber);
-        return new ResponseEntity<>(receipeResource, HttpStatus.OK);
+        if (receipeService.isReceipeExcist(receipeId)==true)
+        {
+            String receipeResource=receipeService.addReceipeResources(receipeId, userId, resourceId, resourceNumber);
+            if (receipeResource!=null)
+            {
+                return new ResponseEntity<>(receipeResource, HttpStatus.OK);
+            }
+            else return new ResponseEntity<>(HttpStatus.NOT_FOUND);            
+        }
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);        
     }
     @RequestMapping(value = "/receipe/getpublicandcompleted", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")

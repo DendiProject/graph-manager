@@ -55,13 +55,17 @@ public class ResourceServiceImpl implements ResourceService{
 
     @Override
     public String createNodeResource(String resourceName, String nodeId, String resourceOrIngredient) {
-        Resources resource=new Resources();
-        resource.setName(resourceName);
-        resource.setIngredientOrResource(resourceOrIngredient);
         Node node=nodeRepository.findByNodeId(nodeId);
-        resource.setNode(node);
-        Resources saved=resourcesRepository.save(resource);
-        return saved.getResourceId();
+        if (node!=null)
+        {
+            Resources resource=new Resources();
+            resource.setName(resourceName);
+            resource.setIngredientOrResource(resourceOrIngredient);
+            resource.setNode(node);
+            Resources saved=resourcesRepository.save(resource);
+            return saved.getResourceId();
+        }
+        else return null;
     }
 
     

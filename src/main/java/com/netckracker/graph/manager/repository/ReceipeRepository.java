@@ -7,6 +7,7 @@ package com.netckracker.graph.manager.repository;
 
 import com.netckracker.graph.manager.model.Catalog;
 import com.netckracker.graph.manager.model.Receipe;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -34,4 +35,76 @@ public interface ReceipeRepository extends JpaRepository <Receipe, String>{
     
     Page<Receipe> findByIsPublicAndIsCompleted(boolean isPublic, boolean isCompleted, Pageable pageable);
     Page<Receipe> findByIsPublicAndIsCompletedAndCatalog(boolean isPublic, boolean isCompleted, Catalog catalog, Pageable pageable);
+    
+    @Query (value="SELECT r.* FROM RECEIPE r WHERE r.receipe_id in "
+            + "(SELECT t.receipe_id FROM TopOfReceipes t JOIN  " 
+            + "(Select receipe_id, sum(frequency_of_use) as sums FROM TopOfReceipes  GROUP BY receipe_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id ORDER BY t1.sums DESC )"
+            + "AND r.is_public=true AND r.is_completed=true AND r.is_deleted=false "
+            + "ORDER BY  r.receipe_id --#pageable\n",
+            countQuery="SELECT count(*) FROM RECEIPE r WHERE r.receipe_id in "
+            + "(SELECT t.receipe_id FROM TopOfReceipes t JOIN  " 
+            + "(Select receipe_id, sum(frequency_of_use) as sums FROM TopOfReceipes  GROUP BY receipe_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND r.is_public=true AND r.is_completed=true AND r.is_deleted=false "
+            + "GROUP BY r.receipe_id "
+            + "ORDER BY r.receipe_id --#pageable\n",
+     nativeQuery = true)
+    Page <Receipe> getTop(Pageable pageable);
+
+    
+    
+    @Query (value="SELECT r.* FROM RECEIPE r WHERE r.receipe_id in "
+            + "(SELECT t.receipe_id FROM TopOfReceipes t JOIN  " 
+            + "(Select receipe_id, user_id, sum(frequency_of_use) as sums FROM TopOfReceipes  "
+            + "WHERE user_id=:userId "
+            + "GROUP BY receipe_id, user_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND is_public=true AND is_completed=true AND is_deleted=false "
+            + "ORDER BY r.receipe_id --#pageable\n",
+            countQuery="SELECT count(*) FROM RECEIPE r WHERE r.receipe_id in "
+            + "(Select receipe_id, user_id, sum(frequency_of_use) as sums FROM TopOfReceipes  "
+            + "WHERE user_id=:userId "
+            + "GROUP BY receipe_id, user_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND is_public=true AND is_completed=true AND is_deleted=false "
+            + "ORDER BY r.receipe_id --#pageable\n",
+     nativeQuery = true)
+    Page<Receipe> getTopByUser(@Param("userId") String userId, Pageable pageable);
+    
+    @Query (value="SELECT r.* FROM RECEIPE r WHERE r.receipe_id in "
+            + "(SELECT t.receipe_id FROM TopOfReceipes t JOIN  " 
+            + "(Select receipe_id, sum(frequency_of_use) as sums FROM TopOfReceipes  GROUP BY receipe_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND r.is_public=true AND r.is_completed=true AND r.is_deleted=false AND r.catalog_id=:catalogId "
+            + "ORDER BY r.receipe_id --#pageable\n",
+            countQuery="SELECT count(*) FROM RECEIPE r WHERE r.receipe_id in "
+            + "(SELECT t.receipe_id FROM TopOfReceipes t JOIN  " 
+            + "(Select receipe_id, sum(frequency_of_use) as sums FROM TopOfReceipes  GROUP BY receipe_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND r.is_public=true AND r.is_completed=true AND r.is_deleted=false AND r.catalog_id=:catalogId "
+            + "ORDER BY r.receipe_id --#pageable\n",
+     nativeQuery = true)
+    Page <Receipe> getTopByCatalog(@Param("catalogId") String catalogId, Pageable pageable);
+    
+    @Query (value="SELECT r.* FROM RECEIPE r WHERE r.receipe_id in "
+            + "(SELECT t.receipe_id FROM TopOfReceipes t JOIN  " 
+            + "(Select receipe_id, user_id, sum(frequency_of_use) as sums FROM TopOfReceipes  "
+            + "WHERE user_id=:userId "
+            + "GROUP BY receipe_id, user_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND r.is_public=true AND r.is_completed=true AND r.is_deleted=false AND r.catalog_id=:catalogId "
+            + "ORDER BY r.receipe_id --#pageable\n",
+            countQuery="SELECT count(*) FROM RECEIPE r WHERE r.receipe_id in "
+            + "(Select receipe_id, user_id, sum(frequency_of_use) as sums FROM TopOfReceipes  "
+            + "WHERE user_id=:userId "
+            + "GROUP BY receipe_id, user_id" 
+            + " ORDER BY sums DESC) t1  ON t.receipe_id=t1.receipe_id )"
+            + "AND r.is_public=true AND r.is_completed=true AND r.is_deleted=false AND r.catalog_id=:catalogId "
+            + "ORDER BY r.receipe_id --#pageable\n",
+     nativeQuery = true)
+    Page<Receipe> getTopByUserAndCatalog(@Param("userId") String userId,@Param("catalogId") String catalogId,
+            Pageable pageable);
+    
+
 }

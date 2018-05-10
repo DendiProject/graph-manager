@@ -5,6 +5,7 @@
  */
 package com.netckracker.graph.manager.service;
 
+import com.netckracker.graph.manager.model.ReceipeVersion;
 import com.netckracker.graph.manager.modelDto.GraphDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import java.util.List;
@@ -26,4 +27,6 @@ public interface NodeService {
     public List<ResourceDto> getNodesResources(String nodeId, String inputOrOutput, String ingredientOrResource);
     public GraphDto getReceipeTestGraph(String receipeId, String userId);
     public GraphDto getReceipeParallelGraph(String receipeId, String userId);
+    public void copyReceipeVersion(ReceipeVersion fromVersion, ReceipeVersion toVersion);
+    public boolean isNodeExcist(String nodeId);
 }

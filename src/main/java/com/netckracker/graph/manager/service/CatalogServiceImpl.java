@@ -32,7 +32,7 @@ public class CatalogServiceImpl implements CatalogService{
             Catalog saved=catalogRepository.save(catalog);
             return saved.getCatalogId();
         }
-        else return null;
+        else return find.getCatalogId();
     }
 
     @Override
