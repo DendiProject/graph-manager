@@ -28,8 +28,8 @@ public class CatalogController {
     
     @RequestMapping(value = "/catalog/create", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<String> addCatalog(@RequestParam String catalogName, @RequestParam String description){
-        String catalogId=catalogService.createCatalog(catalogName, description);
+    public ResponseEntity<String> addCatalog(@RequestParam String catalogName, @RequestParam String descriptionId){
+        String catalogId=catalogService.createCatalog(catalogName, descriptionId);
      return new ResponseEntity<>(catalogId, HttpStatus.OK);
     }
     

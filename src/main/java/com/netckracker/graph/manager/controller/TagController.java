@@ -31,15 +31,15 @@ public class TagController {
     @Autowired
     private ReceipeService receipeService;
      
-     @RequestMapping(value = "/receipe/getbytag/{tagName}", params = { "page", "size" },method = RequestMethod.GET,
+     @RequestMapping(value = "/receipe/getbytag/{tagName}",method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public  ResponseEntity<?> getReceipesByTag(@PathVariable  String  tagName, @RequestParam(required=false, value="page" ) int page,
-           @RequestParam(required=false, value="size" ) int size ){
+    public  ResponseEntity<?> getReceipesByTag(@PathVariable  String  tagName, 
+            @RequestParam (required=false) Integer page, @RequestParam (required=false) Integer size){
         
-        if (size==0&&page==0)
+       if (size==null&&page==null)
         {
             page=0;
-            size=6;
+            size=5;
         }
         
         List<ReceipeDto> receipes=tagService.findByTag(tagName, page, size);

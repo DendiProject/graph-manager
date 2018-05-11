@@ -22,13 +22,13 @@ public class CatalogServiceImpl implements CatalogService{
 
     @Override
     @Transactional
-    public String createCatalog(String name, String description) {
+    public String createCatalog(String name, String descriptionId) {
         Catalog find=catalogRepository.findByName(name);
         if (find==null)
         {
             Catalog catalog=new Catalog();
             catalog.setName(name);
-            catalog.setDescription(description);
+            catalog.setDescriptionId(descriptionId);
             Catalog saved=catalogRepository.save(catalog);
             return saved.getCatalogId();
         }

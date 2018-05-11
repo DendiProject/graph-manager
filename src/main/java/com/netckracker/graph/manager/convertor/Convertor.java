@@ -86,6 +86,9 @@ public class Convertor {
         {
             resourceDto.setName(nodeResource.getResource().getName());
             resourceDto.setResourceId(nodeResource.getResource().getResourceId());
+            resourceDto.setIngredientOrResource(nodeResource.getResource().getIngredientOrResource());
+            resourceDto.setMeasuring(nodeResource.getResource().getMeasuring());
+            resourceDto.setPictureId(nodeResource.getResource().getPictureId());
         }
         if (nodeResource.getPreviousNode()!=null)
         {

@@ -31,15 +31,15 @@ public class ResourceController {
     @Autowired
     private NodeService nodeService;
     
-    @RequestMapping(value = "/resource/getbyfirstletters/{letters}", params = { "page", "size" },method = RequestMethod.GET,
+    @RequestMapping(value = "/resource/getbyfirstletters/{letters}",method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public  ResponseEntity<?> getResourcesByLetters(@PathVariable  String  letters, @RequestParam String ingredientOrResource,
-            @RequestParam( "page" ) int page, @RequestParam( "size" ) int size ){
+            @RequestParam (required=false) Integer page, @RequestParam (required=false) Integer size ){
         
-        if (size==0&&page==0)
+        if (size==null&&page==null)
         {
             page=0;
-            size=6;
+            size=5;
         }
         
         List<ResourceNameDto> receipes=resourceService.findByFirstLetters(letters, ingredientOrResource,page, size);

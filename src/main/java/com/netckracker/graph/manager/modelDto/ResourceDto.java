@@ -15,6 +15,33 @@ public class ResourceDto {
     private String previousNodeId;
     private String name;
     private double resourceNumber;
+    private String ingredientOrResource;
+    private String measuring;
+    private String pictureId;
+
+    public String getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(String pictureId) {
+        this.pictureId = pictureId;
+    }   
+    public String getIngredientOrResource() {
+        return ingredientOrResource;
+    }
+
+    public void setIngredientOrResource(String ingredientOrResource) {
+        this.ingredientOrResource = ingredientOrResource;
+    }
+
+    public String getMeasuring() {
+        return measuring;
+    }
+
+    public void setMeasuring(String measuring) {
+        this.measuring = measuring;
+    }
+    
     public String getResourceId() {
         return resourceId;
     }

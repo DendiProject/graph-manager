@@ -56,7 +56,7 @@ public class CatalogControllerTest {
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post("/catalog/create");
         request.param("catalogName", "deserts");
-        request.param("description", "tasty deserts");
+        request.param("descriptionId", "tasty deserts");
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
       MvcResult  result = mockMvc.perform(request).andReturn(); 
@@ -74,7 +74,7 @@ public class CatalogControllerTest {
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);     
       MvcResult  result = mockMvc.perform(request).andReturn();  
-     JSONAssert.assertEquals("{catalogId:"+catalog.getCatalogId()+",name:"+catalog.getName()+",description:"+catalog.getDescription()+"}", 
+     JSONAssert.assertEquals("{catalogId:"+catalog.getCatalogId()+",name:"+catalog.getName()+",descriptionId:"+catalog.getDescriptionId()+"}", 
              result.getResponse().getContentAsString(), false);
         
     }

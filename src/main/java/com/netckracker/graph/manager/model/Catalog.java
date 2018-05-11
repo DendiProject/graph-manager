@@ -26,8 +26,8 @@ public class Catalog implements Serializable {
     @Column(name = "name") 
     private String name;
     
-    @Column(name = "description") 
-    private String description;
+    @Column(name = "description_id") 
+    private String descriptionId;
 
     public String getCatalogId() {
         return catalogId;
@@ -45,12 +45,12 @@ public class Catalog implements Serializable {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getDescriptionId() {
+        return descriptionId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescriptionId(String descriptionId) {
+        this.descriptionId = descriptionId;
     }
     
     

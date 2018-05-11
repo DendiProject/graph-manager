@@ -1,6 +1,6 @@
 create table Catalog 
 (catalog_id varchar(255) not null, 
-    description varchar(255), 
+    description_id varchar(255), 
     name varchar(255),
     CONSTRAINT catalog_pkey PRIMARY KEY (catalog_id)
 )
