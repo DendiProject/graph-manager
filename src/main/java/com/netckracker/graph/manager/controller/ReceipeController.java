@@ -30,9 +30,9 @@ public class ReceipeController {
     
     @RequestMapping(value = "/receipe/addreceipe", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<ReceipeDto> addReceipe(@RequestParam String name, @RequestParam String descriptionId, 
+    public ResponseEntity<ReceipeDto> addReceipe(@RequestParam String name, @RequestParam String description, 
             @RequestParam String catalogId, @RequestParam String userId, @RequestParam boolean isPublic ){
-        ReceipeDto receipe=receipeService.createReceipe(name, descriptionId, catalogId, userId, isPublic);
+        ReceipeDto receipe=receipeService.createReceipe(name, description, catalogId, userId, isPublic);
      return new ResponseEntity<>(receipe, HttpStatus.OK);
     }
     

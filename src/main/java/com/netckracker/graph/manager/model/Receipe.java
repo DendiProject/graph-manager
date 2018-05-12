@@ -37,7 +37,7 @@ public class Receipe implements Serializable {
     private String name;
     
     @Column(name = "description_id") 
-    private String descriptionId;
+    private String description;
     
     @Column(name = "is_public") 
     private boolean isPublic;
@@ -79,12 +79,12 @@ public class Receipe implements Serializable {
         this.name = name;
     }
 
-    public String getDescriptionId() {
-        return descriptionId;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptionId(String descriptionId) {
-        this.descriptionId = descriptionId;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isIsPublic() {

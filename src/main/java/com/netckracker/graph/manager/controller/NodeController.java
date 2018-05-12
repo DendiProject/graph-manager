@@ -10,6 +10,7 @@ import com.netckracker.graph.manager.modelDto.GraphDto;
 import com.netckracker.graph.manager.modelDto.NodeDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import com.netckracker.graph.manager.service.NodeService;
+import com.netckracker.graph.manager.service.ReceipeService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeController {
     @Autowired
     private NodeService nodeService;
+    @Autowired
+    private ReceipeService receipeService;
     
     @RequestMapping(value = "/node/addnode", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
@@ -154,22 +157,42 @@ public class NodeController {
     @RequestMapping(value = "/graph/getgraph", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> getGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
-        GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
-        if (graph==null)
+        if (receipeService.isVersionCompleted(receipeId)==true)
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
+            if (graph==null)
+            {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else return new ResponseEntity<>(graph, HttpStatus.OK); 
         }
-        else return new ResponseEntity<>(graph, HttpStatus.OK);        
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);     
     }
     @RequestMapping(value = "/graph/getparallelgraph", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> getParallelGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
-        GraphDto graph=nodeService.getReceipeParallelGraph(receipeId, userId);
-        if (graph==null)
+        if (receipeService.isVersionCompleted(receipeId)==true)
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            GraphDto graph=nodeService.getReceipeParallelGraph(receipeId, userId);
+            if (graph==null)
+            {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else return new ResponseEntity<>(graph, HttpStatus.OK);  
         }
-        else return new ResponseEntity<>(graph, HttpStatus.OK);   
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);  
+    }
+    
+    @RequestMapping(value = "/graph/getnotcompletedgraph", method = RequestMethod.GET, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<?> getNotCompletedGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
+        
+            GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
+            if (graph==null)
+            {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            else return new ResponseEntity<>(graph, HttpStatus.OK);  
     }
     
     @RequestMapping(value = "/graph/gettestgraph", method = RequestMethod.GET)
@@ -177,5 +200,7 @@ public class NodeController {
                 GraphDto graph=nodeService.getReceipeTestGraph(receipeId, userId);
             return new ResponseEntity<>(graph, HttpStatus.OK);        
     }  
+    
+    
  
 }

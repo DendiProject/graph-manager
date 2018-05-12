@@ -342,6 +342,8 @@ public class GetParalellGraphTest {
         nodeService.createEdge(nodeId9, nodeId10);
         nodeService.createEdge(nodeId10, nodeId11);
         nodeService.createEdge(nodeId3, nodeId6);
+        
+        
 
     }
     
@@ -349,13 +351,43 @@ public class GetParalellGraphTest {
     public void getParalellGraph() throws Exception
     {
         String userId="1841119";
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+        MockHttpServletRequestBuilder request2 = MockMvcRequestBuilders
+                .get("/graph/getnotcompletedgraph");
+        request2.param("receipeId",receipeId);  
+        request2.param("userId","11119"); 
+        request2.accept(MediaType.APPLICATION_JSON);
+        request2.contentType(MediaType.APPLICATION_JSON);
+        ResultActions result2 = mockMvc.perform(request2)
+                 .andExpect(MockMvcResultMatchers.status().isOk()); 
+        System.out.println(result2.andReturn().getResponse().getContentAsString());
+        
+        receipeService.setCompleted(receipeId);
+        
+       //String userId="1841119";
+       MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .get("/graph/getparallelgraph");
         request.param("receipeId",receipeId);  
         request.param("userId",userId); 
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
         ResultActions result = mockMvc.perform(request)
+                 .andExpect(MockMvcResultMatchers.status().isOk()); 
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+    }
+    
+    @Test
+    public void getNotCompletedReceipe() throws Exception
+    {
+        String userId="184113feg3f19";
+        MockHttpServletRequestBuilder request2 = MockMvcRequestBuilders
+                .get("/graph/getnotcompletedgraph");
+        request2.param("receipeId",receipeId);  
+        request2.param("userId",userId); 
+        request2.accept(MediaType.APPLICATION_JSON);
+        request2.contentType(MediaType.APPLICATION_JSON);
+        /*ResultActions result2 = mockMvc.perform(request2)
+                 .andExpect(MockMvcResultMatchers.status().isNotFound()); */
+        ResultActions result = mockMvc.perform(request2)
                  .andExpect(MockMvcResultMatchers.status().isOk()); 
         System.out.println(result.andReturn().getResponse().getContentAsString());
     }

@@ -136,11 +136,11 @@ public class NodeServiceImpl implements NodeService{
 
     @Override
     @Transactional
-    public void addNodeDescription(String nodeId, String descriptionId) {
+    public void addNodeDescription(String nodeId, String description) {
         Node node=nodeRepository.findByNodeId(nodeId);
         if (node!=null)
         {
-            node.setDescriptionId(descriptionId);
+            node.setDescription(description);
             nodeRepository.save(node);
         }
     }
@@ -151,54 +151,57 @@ public class NodeServiceImpl implements NodeService{
         if (receipe!=null)
         {
             topService.increaseCounter(receipe, userId);
-        ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
-        if (version==null)
-        {
-            version=versionRepository.findByReceipeAndIsMainVersion(receipe, true);
-        }
-        GraphDto graph=new GraphDto();
-        graph.setReceipeName(receipe.getName());
-        List<Node> nodes=nodeRepository.findByVersion(version);
-        List<NodeResources> resources=nodeResourcesRepository.findByVersion(version);
-        for (int i=0; i<resources.size(); i++)
-        {
-            if (resources.get(i).getResource().getIngredientOrResource().equals("ingredient"))
+            ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version==null)
             {
-                ResourceDto ingredient=convertor.convertNodeResourceToDto(resources.get(i));
-                graph.getIndredients().add(ingredient);
+                version=versionRepository.findByReceipeAndIsMainVersion(receipe, true);
             }
-            if (resources.get(i).getResource().getIngredientOrResource().equals("resource"))
+            if (version!=null)
             {
-                ResourceDto resource=convertor.convertNodeResourceToDto(resources.get(i));
-                graph.getResources().add(resource);
-            }
-        }     
-        List<NodeDto> nodeDtos=nodes.stream().map(node->convertor.convertNodeToDto(node))
-               .collect(Collectors.toList());
-        graph.setNodes(nodeDtos);
-        
-        for(int i=0; i<nodes.size();i++)
-        {
-            for (int j=0;j<nodes.size(); j++)
-            {
-                Edges edge=edgesRepository.findByStartNodeAndEndNode(nodes.get(i), nodes.get(j));
-                if (edge!=null)
-                {                    
-                    graph.getEdges().add(convertor.convertEgdeToDto(edge));
-                }
-                else 
+                GraphDto graph=new GraphDto();
+                graph.setReceipeName(receipe.getName());
+                List<Node> nodes=nodeRepository.findByVersion(version);
+                List<NodeResources> resources=nodeResourcesRepository.findByVersion(version);
+                for (int i=0; i<resources.size(); i++)
                 {
-                    Edges edge1=edgesRepository.findByStartNodeAndEndNode(nodes.get(j), nodes.get(i));
-                    if (edge1!=null)
+                    if (resources.get(i).getResource().getIngredientOrResource().equals("ingredient"))
                     {
-                    graph.getEdges().add(convertor.convertEgdeToDto(edge1));
+                        ResourceDto ingredient=convertor.convertNodeResourceToDto(resources.get(i));
+                        graph.getIndredients().add(ingredient);
                     }
-                }                
-            }            
-        }        
-        return graph;
-        }
-        else return null;
+                    if (resources.get(i).getResource().getIngredientOrResource().equals("resource"))
+                    {
+                        ResourceDto resource=convertor.convertNodeResourceToDto(resources.get(i));
+                        graph.getResources().add(resource);
+                    }
+                }     
+                List<NodeDto> nodeDtos=nodes.stream().map(node->convertor.convertNodeToDto(node))
+                       .collect(Collectors.toList());
+                graph.setNodes(nodeDtos);
+
+                for(int i=0; i<nodes.size();i++)
+                {
+                    for (int j=0;j<nodes.size(); j++)
+                    {
+                        Edges edge=edgesRepository.findByStartNodeAndEndNode(nodes.get(i), nodes.get(j));
+                        if (edge!=null)
+                        {                    
+                            graph.getEdges().add(convertor.convertEgdeToDto(edge));
+                        }
+                        else 
+                        {
+                            Edges edge1=edgesRepository.findByStartNodeAndEndNode(nodes.get(j), nodes.get(i));
+                            if (edge1!=null)
+                            {
+                            graph.getEdges().add(convertor.convertEgdeToDto(edge1));
+                            }
+                        }                
+                    }            
+                }        
+                return graph;
+            }
+        }   
+        return null;
     }
 
     @Override
@@ -207,6 +210,16 @@ public class NodeServiceImpl implements NodeService{
         Node node=nodeRepository.findByNodeId(nodeId);
         if (node!=null)
         {
+            List<Edges> edges=edgesRepository.findByStartNodeOrEndNode(node, node);
+            for (int i=0; i<edges.size();i++)
+            {
+                edgesRepository.delete(edges.get(i));
+            }
+            List<NodeResources> resources =nodeResourcesRepository.findByNode(node);
+            for (int i=0; i<resources.size();i++)
+            {
+                nodeResourcesRepository.delete(resources.get(i));
+            }
             nodeRepository.delete(node);
         }
     }
@@ -536,5 +549,33 @@ public class NodeServiceImpl implements NodeService{
         }
         else return false;
     }
+
+    @Override
+    @Transactional
+    public Node getDefaultNode() {
+        Node node=new Node();
+        node.setDescription("DEFAULT NODE");
+        Node saved =nodeRepository.save(node);
+        return saved;
+    }
+
+    @Override
+    public boolean isLastNode(String nodeId) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        if (node.getVersion()!=null)
+        {
+            Node lastNode=nodeRepository.findByLastNode(node.getVersion().getVersionId());
+            if (lastNode!=null&node!=null)
+            {
+                if (lastNode.getNodeId().equals(node.getNodeId()));
+                {
+                    return true;
+                }
+            }
+        }        
+        return false;
+    }
+    
+    
     
 }

@@ -19,7 +19,11 @@ import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import com.netckracker.graph.manager.modelDto.ResourceNameDto;
 import com.netckracker.graph.manager.modelDto.TagsDto;
+import com.netckracker.graph.manager.modelDto.UserStepDto;
+import com.netckracker.graph.manager.repository.NodeResourcesRepository;
 import com.netckracker.graph.manager.repository.ResourcesRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,7 +37,9 @@ public class Convertor {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private ResourcesRepository resourcesRepository;
+    private ResourcesRepository resourcesRepository;    
+    @Autowired
+    private NodeResourcesRepository nodeResourcesRepository;
     
     public ReceipeDto convertReceipeToDto(Receipe receipe)
     {
@@ -94,8 +100,26 @@ public class Convertor {
         {
             resourceDto.setPreviousNodeId(nodeResource.getPreviousNode().getNodeId());
         }
+        resourceDto.setInputOrOutput(nodeResource.getInputOrOutput());
         resourceDto.setResourceNumber(nodeResource.getNumberOfResource());
         return resourceDto;
+    }
+    
+    public UserStepDto convertNodeToUserStepDto(Node node)
+    {
+        List<NodeResources> resources=nodeResourcesRepository.findByIngredients("resource", node.getNodeId());
+        List<NodeResources> ingredients=nodeResourcesRepository.findByIngredients("ingredient", node.getNodeId());
+        UserStepDto userStep=new UserStepDto();
+        userStep.setNodeId(node.getNodeId());
+        userStep.setDescription(node.getDescription());
+        userStep.setPictureId(node.getPictureId());
+        userStep.setResources(resources.stream()
+               .map(resource->convertNodeResourceToDto(resource))
+               .collect(Collectors.toList()));
+        userStep.setIndredients(ingredients.stream()
+               .map(resource->convertNodeResourceToDto(resource))
+               .collect(Collectors.toList()));
+        return userStep;
     }
     
  /*   public CatalogDto convertCatalogToDto(Catalog catalog)

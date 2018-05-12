@@ -31,4 +31,9 @@ public interface NodeResourcesRepository extends JpaRepository <NodeResources, S
     
     List<NodeResources> findByNodeAndInputOutput(Node node, String inputOutput);
     List<NodeResources> findByNode(Node node);    
+    
+    @Query(value="Select n.* from NodeResources n where n.node_id=:nodeId and n.resource_id in"
+            + "(Select r.resource_id from Resources r where r.ingredient_or_resource=:ingredientResource)",
+            nativeQuery = true)
+    List<NodeResources> findByIngredients( @Param("ingredientResource") String ingredientResource, @Param ("nodeId")String nodeId);
 }

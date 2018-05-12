@@ -61,12 +61,12 @@ public class TagController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    @RequestMapping(value = "/tag/getbyletters/{letters}", params = { "page", "size" },method = RequestMethod.GET,
+    @RequestMapping(value = "/tag/getbyletters/{letters}",method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public  ResponseEntity<?> getTagsByLetters(@PathVariable  String  letters, @RequestParam(required=false, value="page" ) int page,
-           @RequestParam(required=false, value="size" ) int size  ){
+    public  ResponseEntity<?> getTagsByLetters(@PathVariable  String  letters, @RequestParam(required=false, value="page" ) Integer page,
+           @RequestParam(required=false, value="size" ) Integer size  ){
         
-        if (size==0&&page==0)
+        if (size==null&&page==null)
         {
             page=0;
             size=6;

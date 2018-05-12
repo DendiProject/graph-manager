@@ -7,6 +7,7 @@ package com.netckracker.graph.manager.service;
 
 import com.netckracker.graph.manager.convertor.Convertor;
 import com.netckracker.graph.manager.model.Catalog;
+import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.model.NodeResources;
 import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.ReceipeVersion;
@@ -14,6 +15,7 @@ import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.repository.CatalogRepository;
+import com.netckracker.graph.manager.repository.NodeRepository;
 import com.netckracker.graph.manager.repository.NodeResourcesRepository;
 import com.netckracker.graph.manager.repository.ReceipeRepository;
 import com.netckracker.graph.manager.repository.ReceipeVersionRepository;
@@ -45,6 +47,8 @@ public class ReceipeServiceImpl implements ReceipeService{
     private NodeService nodeService;
     @Autowired
     private Convertor convertor;
+    @Autowired
+    private NodeRepository nodeRepository;
 
     @Override
     @Transactional
@@ -62,6 +66,16 @@ public class ReceipeServiceImpl implements ReceipeService{
                }
                else 
                {
+                   List<NodeResources> resources=nodeResourcesRepository.findByVersion(find);
+                   for (int i=0;i<resources.size();i++)
+                   {
+                       nodeResourcesRepository.delete(resources.get(i));
+                   }
+                   List<Node> nodes=nodeRepository.findByVersion(find);
+                   for (int i=0; i<nodes.size();i++)
+                   {
+                       nodeService.deleteNode(nodes.get(i).getNodeId());
+                   }
                    versionRepository.delete(find);
                }
             }
@@ -70,11 +84,11 @@ public class ReceipeServiceImpl implements ReceipeService{
 
     @Override
     @Transactional
-    public ReceipeDto createReceipe(String name, String descriptionId, String catalogId, 
+    public ReceipeDto createReceipe(String name, String description, String catalogId, 
             String userId, boolean isPublic) {
         Receipe receipe=new Receipe();
         receipe.setName(name);
-        receipe.setDescriptionId(descriptionId);
+        receipe.setDescription(description);
         receipe.setIsCompleted(false);
         receipe.setIsPublic(isPublic);
         receipe.setIsDeleted(false);
@@ -192,5 +206,15 @@ public class ReceipeServiceImpl implements ReceipeService{
             return true;
         }
         else return false;
+    }
+
+    @Override
+    public boolean isVersionCompleted(String receipeId) {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            return receipe.isIsCompleted();
+        }
+        return false;
     }
 }

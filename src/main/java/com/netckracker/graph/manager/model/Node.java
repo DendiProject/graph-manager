@@ -29,7 +29,7 @@ public class Node implements Serializable {
     private ReceipeVersion version;
     
     @Column(name = "description_id") 
-    private String descriptionId;
+    private String description;
     
     @Column(name = "label") 
     private String label;
@@ -37,12 +37,12 @@ public class Node implements Serializable {
     @Column(name = "picture_id") 
     private String pictureId;
 
-    public String getDescriptionId() {
-        return descriptionId;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptionId(String descriptionId) {
-        this.descriptionId = descriptionId;
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 

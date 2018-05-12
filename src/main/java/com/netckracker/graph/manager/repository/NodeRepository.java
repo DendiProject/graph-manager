@@ -27,5 +27,22 @@ public interface NodeRepository extends JpaRepository <Node, String> {
             + "(SELECT e1.start_node_id  FROM EDGES e1 JOIN NODE n1 ON e1.start_node_id=n1.node_id WHERE n1.version_id=:versionId)", 
             nativeQuery = true)
     Node findByLastNode(@Param("versionId") String versionId);
+    
+    @Query(value="SELECT DISTINCT n.* FROM NODE n JOIN EDGES e ON n.node_id=e.start_node_id "
+            + "WHERE n.version_id=:versionId and e.start_node_id not in"
+            + "(SELECT e1.end_node_id  FROM EDGES e1 JOIN NODE n1 ON e1.end_node_id=n1.node_id WHERE n1.version_id=:versionId)", 
+            nativeQuery = true)
+    List<Node> findFirst(@Param("versionId") String versionId);
+    
+    @Query(value="SELECT n.* FROM NODE n JOIN EDGES e ON n.node_id=e.end_node_id "
+            + "WHERE  e.start_node_id=:nodeId",
+        //    + "(SELECT e1.start_node_id  FROM EDGES WHERE e1.start_node_id=:nodeId)", 
+            nativeQuery = true)
+    List<Node> findNextNode(@Param ("nodeId") String nodeId);
+    
+    @Query(value="SELECT n.* FROM NODE n JOIN EDGES e ON n.node_id=e.start_node_id "
+            + "WHERE  e.end_node_id=:nodeId",             
+            nativeQuery = true)
+    List<Node> getPerviousNodes(@Param ("nodeId") String nodeId);
 
 }

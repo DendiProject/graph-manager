@@ -15,6 +15,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -95,6 +96,7 @@ public class TopOfReceipesServiceImpl implements  TopOfReceipesService{
     }
 
     @Override
+    @Transactional
     public void increaseCounter(Receipe receipe, String userId) {
         TopOfReceipes top=topRepository.findByReceipeAndUserId(receipe, userId);
         if (top!=null)

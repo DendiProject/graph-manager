@@ -8,11 +8,13 @@ package com.netckracker.graph.manager.controller;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.netckracker.graph.manager.model.Edges;
 import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import com.netckracker.graph.manager.modelDto.ResourceNameDto;
 import com.netckracker.graph.manager.repository.CatalogRepository;
+import com.netckracker.graph.manager.repository.EdgesRepository;
 import com.netckracker.graph.manager.repository.NodeRepository;
 import com.netckracker.graph.manager.service.CatalogService;
 import com.netckracker.graph.manager.service.NodeService;
@@ -56,6 +58,8 @@ public class NodeControllerTest {
     private NodeService nodeService;
     @Autowired
     private NodeRepository nodeRepository;
+    @Autowired
+    private EdgesRepository edgesRepository;
     @Autowired
     private ReceipeService receipeService;
     @Autowired
@@ -109,7 +113,7 @@ public class NodeControllerTest {
         ResultActions result = mockMvc.perform(request)
                  .andExpect(MockMvcResultMatchers.status().isOk()); 
         Node node=nodeRepository.findByNodeId(nodeId);
-        assertEquals("description incorrecrt",nodeDescription, node.getDescriptionId());
+        assertEquals("description incorrecrt",nodeDescription, node.getDescription());
         
     }
     @Test
@@ -133,10 +137,19 @@ public class NodeControllerTest {
     @Test 
     public void deleteNodeTest() throws Exception
     {
-        Node node=new Node();
-        Node saved=nodeRepository.save(node);
+        Node node1=new Node();
+        node1.setDescription("test node1");
+        Node saved1=nodeRepository.save(node1);
+        Node node2=new Node();
+        node2.setDescription("testNode2");
+        Node saved2=nodeRepository.save(node2);
+        nodeService.createEdge(saved1.getNodeId(), saved2.getNodeId());
+        List<Edges> edges=edgesRepository.findByStartNodeOrEndNode(saved1, saved1);
+        assertEquals("edge incorrecrt",saved1.getNodeId(), edges.get(0).getStartNode().getNodeId());
+        assertEquals("edge incorrecrt",saved2.getNodeId(), edges.get(0).getEndNode().getNodeId());
+        
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete("/node/deletenode/"+saved.getNodeId());
+                .delete("/node/deletenode/"+saved1.getNodeId());
         ResultActions result = mockMvc.perform(request)
                  .andExpect(MockMvcResultMatchers.status().isOk());
     }
@@ -213,9 +226,4 @@ public class NodeControllerTest {
         assertEquals("ingredient number incorrecrt","1.0", jsonResource.getString("resourceNumber"));
     }
     
-    @Test
-    public void getReceipeParalellGraph()
-    {
-        
-    }
 }

@@ -105,13 +105,33 @@ CONSTRAINT tag_pkey PRIMARY KEY (tag_id)
 WITH (
     OIDS = FALSE
 );
+
+create table Sessions ( 
+session_id varchar(255),
+CONSTRAINT session_pkey PRIMARY KEY (session_id)
+WITH (
+    OIDS = FALSE
+);
+
 create table UserStep (
 step_id varchar(255) not null, 
+session_id varchar(255),
 is_completed boolean, 
-user_id varchar(255),
+is_started boolean,
 node_id varchar(255), 
 version_id varchar(255),
+user_id varchar(255),
 CONSTRAINT step_pkey PRIMARY KEY (step_id)
+)
+WITH (
+    OIDS = FALSE
+);
+
+create table InvitedUsers ( 
+invited_id varchar(255),
+user_id varchar(255),
+session_id varchar(255),
+CONSTRAINT users_pkey PRIMARY KEY (invited_id)
 )
 WITH (
     OIDS = FALSE
@@ -136,3 +156,6 @@ CREATE TABLE Receipe_tagList
     tagList_tag_id varchar(255) not null);
 alter table Receipe_tagList add constraint FK9g52vxo4gnsilfckxug56tgt9 foreign key (tagList_tag_id) references Tags;
 alter table Receipe_tagList add constraint FKgfgd00q37nwo8s5opbgjjiv8e foreign key (Receipe_receipe_id) references Receipe;
+
+alter table UserStep add constraint sessionsIdFK foreign key (session_id) references Sessions;
+alter table InvitedUsers add constraint sessionIdFK foreign key (session_id) references Sessions;

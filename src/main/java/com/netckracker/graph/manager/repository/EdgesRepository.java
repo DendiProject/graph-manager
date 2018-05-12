@@ -27,5 +27,7 @@ public interface EdgesRepository extends JpaRepository <Edges, String>  {
             + "(SELECT n1.NODE_ID FROM NODE n1 WHERE n1.version_id=:versionId)",
             nativeQuery = true)
     List<Edges> findAllEdges(@Param ("versionId") String versionId);
+    
+    List <Edges> findByStartNodeOrEndNode(Node node1, Node node2);
   
 }

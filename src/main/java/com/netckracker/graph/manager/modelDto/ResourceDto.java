@@ -18,7 +18,16 @@ public class ResourceDto {
     private String ingredientOrResource;
     private String measuring;
     private String pictureId;
+    private String inputOrOutput;
 
+    public String getInputOrOutput() {
+        return inputOrOutput;
+    }
+
+    public void setInputOrOutput(String inputOrOutput) {
+        this.inputOrOutput = inputOrOutput;
+    }    
+    
     public String getPictureId() {
         return pictureId;
     }
