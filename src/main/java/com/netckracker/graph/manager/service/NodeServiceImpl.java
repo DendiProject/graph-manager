@@ -553,10 +553,12 @@ public class NodeServiceImpl implements NodeService{
     @Override
     @Transactional
     public Node getDefaultNode() {
-        Node node=new Node();
-        node.setDescription("DEFAULT NODE");
-        Node saved =nodeRepository.save(node);
-        return saved;
+        Node node=nodeRepository.findByNodeId("defaultNodeId");
+        if (node!=null)
+        {
+            return node;
+        }
+        return null;
     }
 
     @Override
