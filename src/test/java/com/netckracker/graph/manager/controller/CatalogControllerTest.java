@@ -75,8 +75,29 @@ public class CatalogControllerTest {
         request.contentType(MediaType.APPLICATION_JSON);     
       MvcResult  result = mockMvc.perform(request).andReturn();  
      JSONAssert.assertEquals("{catalogId:"+catalog.getCatalogId()+",name:"+catalog.getName()+",description:"+catalog.getDescription()+"}", 
-             result.getResponse().getContentAsString(), false);
-        
+             result.getResponse().getContentAsString(), false);        
+    }
+    @Test
+    public void getCatalogsByLetters() throws Exception
+    {
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/catalog/create");
+        request.param("catalogName", "indiankirchen");
+        request.param("description", "tasty food");
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);
+      MvcResult  result = mockMvc.perform(request).andReturn(); 
+      //assertEquals("catalog incorrecrt", catalogService.findCatalog("deserts").getCatalogId(), result.getResponse().getContentAsString());
+      
+        MockHttpServletRequestBuilder request2 = MockMvcRequestBuilders
+                .get("/catalog/getbyletters/indi");
+       // request2.param("page", "0");
+        //request2.param("size", "5");
+        request2.accept(MediaType.APPLICATION_JSON);
+        request2.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result2= mockMvc.perform(request2).andReturn();
+        System.out.println("CATALOGS");
+        System.out.println(result2.getResponse().getContentAsString());
     }
     
 }

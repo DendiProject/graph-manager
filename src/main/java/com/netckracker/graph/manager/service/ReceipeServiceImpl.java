@@ -15,6 +15,7 @@ import com.netckracker.graph.manager.model.Resources;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ReceipeInformationDto;
 import com.netckracker.graph.manager.repository.CatalogRepository;
+import com.netckracker.graph.manager.repository.NodeRepository;
 import com.netckracker.graph.manager.repository.NodeResourcesRepository;
 import com.netckracker.graph.manager.repository.ReceipeRepository;
 import com.netckracker.graph.manager.repository.ReceipeVersionRepository;
@@ -43,25 +44,42 @@ public class ReceipeServiceImpl implements ReceipeService{
     @Autowired
     private ResourcesRepository resourcesRepository;
     @Autowired
+    private NodeService nodeService;
+    @Autowired
     private Convertor convertor;
+    @Autowired
+    private NodeRepository nodeRepository;
 
     @Override
     @Transactional
     public void deleteReceipe(String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion find=versionRepository.findByReceipeAndUserId(receipe, userId);
-        if (find!=null)
+        if (receipe!=null)
         {
-           if (find.isIsMainVersion()==true)
-           {
-               receipe.setIsDeleted(true);
-               receipeRepository.save(receipe);
-           }
-           else 
-           {
-               versionRepository.delete(find);
-           }
-        }        
+            ReceipeVersion find=versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (find!=null)
+            {
+               if (find.isIsMainVersion()==true)
+               {
+                   receipe.setIsDeleted(true);
+                   receipeRepository.save(receipe);
+               }
+               else 
+               {
+                   List<NodeResources> resources=nodeResourcesRepository.findByVersion(find);
+                   for (int i=0;i<resources.size();i++)
+                   {
+                       nodeResourcesRepository.delete(resources.get(i));
+                   }
+                   List<Node> nodes=nodeRepository.findByVersion(find);
+                   for (int i=0; i<nodes.size();i++)
+                   {
+                       nodeService.deleteNode(nodes.get(i).getNodeId());
+                   }
+                   versionRepository.delete(find);
+               }
+            }
+        }                
     }
 
     @Override
@@ -75,12 +93,15 @@ public class ReceipeServiceImpl implements ReceipeService{
         receipe.setIsPublic(isPublic);
         receipe.setIsDeleted(false);
         Catalog find=catalogRepository.findByCatalogId(catalogId);
-        receipe.setCatalog(find);
+        if (find!=null)
+        {
+          receipe.setCatalog(find);  
+        }        
         Receipe saved=receipeRepository.save(receipe);
         
         ReceipeVersion version=new ReceipeVersion();        
         version.setIsMainVersion(true);
-        
+        version.setIsParalell(false);        
         version.setUserId(userId);
         version.setReceipe(saved);
         versionRepository.save(version);
@@ -94,15 +115,23 @@ public class ReceipeServiceImpl implements ReceipeService{
     public String addReceipeResources(String receipeId,String userId, String resourceId, double resourceNumber) {
         
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version=versionRepository.findByReceipeAndUserId(receipe, userId);
-        Resources resource=resourcesRepository.findByResourceId(resourceId);        
-        NodeResources nodeResource=new NodeResources();
-        nodeResource.setResource(resource);
-        nodeResource.setVersion(version);
-        nodeResource.setNumberOfResource(resourceNumber);  
-        
-        NodeResources saved=nodeResourcesRepository.save(nodeResource);
-        return saved.getNodeResourceId();
+        if (receipe!=null)
+        {
+            ReceipeVersion version=versionRepository.findByReceipeAndUserId(receipe, userId);
+            Resources resource=resourcesRepository.findByResourceId(resourceId);        
+            if (version!=null&&resource!=null)
+            {
+                NodeResources nodeResource=new NodeResources();
+                nodeResource.setResource(resource);
+                nodeResource.setVersion(version);
+                nodeResource.setNumberOfResource(resourceNumber);  
+
+                NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                return saved.getNodeResourceId();
+            }
+            else return null;
+        }
+        else return null;        
     }
 
     @Override
@@ -117,24 +146,75 @@ public class ReceipeServiceImpl implements ReceipeService{
     @Override
     public ReceipeInformationDto getReceipeInformation(String receipeId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            return convertor.convertReceipeToReceipeInformationDto(receipe);
+        }
+        else return null;        
+    }
     
-        return convertor.convertReceipeToReceipeInformationDto(receipe);
+    @Override
+    @Transactional
+    public void createReceipeVersion(String receipeId, String userId)
+    {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            ReceipeVersion version =versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version==null)
+            {
+                ReceipeVersion mainVersion=versionRepository.findByReceipeAndIsMainVersion(receipe, true);           
+                ReceipeVersion newVersion=new ReceipeVersion();
+                newVersion.setIsMainVersion(false);
+                newVersion.setUserId(userId);
+                newVersion.setReceipe(receipe);
+                ReceipeVersion savedVersion=versionRepository.save(newVersion);
+                nodeService.copyReceipeVersion(mainVersion, savedVersion);
+            }
+        }             
     }
 
     @Override
     public List<ReceipeDto> getReceipesByCatalog(String catalogId, int page, int size) {
         Catalog catalog=catalogRepository.findByCatalogId(catalogId);
-        List<Receipe> receipes=receipeRepository.findByIsPublicAndIsCompletedAndCatalog(true, true, catalog,new PageRequest(page, size)).getContent();
+        if (catalog!=null)
+        {
+            List<Receipe> receipes=receipeRepository.findByIsPublicAndIsCompletedAndCatalog(true, true, catalog,new PageRequest(page, size)).getContent();
             return receipes.stream()
                .map(receipe->convertor.convertReceipeToDto(receipe))
                .collect(Collectors.toList());
+        }
+        else return null;        
     }
 
+    @Transactional
     @Override
     public void setCompleted(String receipeId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        receipe.setIsCompleted(true);
-        receipeRepository.save(receipe);
+        if (receipe!=null)
+        {
+            receipe.setIsCompleted(true);
+            receipeRepository.save(receipe);
+        }
+    }      
+
+    @Override
+    public boolean isReceipeExcist(String receipeId) {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            return true;
+        }
+        else return false;
     }
-    
+
+    @Override
+    public boolean isVersionCompleted(String receipeId) {
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            return receipe.isIsCompleted();
+        }
+        return false;
+    }
 }

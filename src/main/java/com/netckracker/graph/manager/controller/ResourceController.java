@@ -7,6 +7,7 @@ package com.netckracker.graph.manager.controller;
 
 
 import com.netckracker.graph.manager.modelDto.ResourceNameDto;
+import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ResourceService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResourceController {
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private NodeService nodeService;
     
-    @RequestMapping(value = "/resource/getbyfirstletters/{letters}", params = { "page", "size" },method = RequestMethod.GET,
+    @RequestMapping(value = "/resource/getbyfirstletters/{letters}",method = RequestMethod.GET,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public  ResponseEntity<?> getResourcesByLetters(@PathVariable  String  letters, @RequestParam String ingredientOrResource,
-            @RequestParam( "page" ) int page, @RequestParam( "size" ) int size ){
+            @RequestParam (required=false) Integer page, @RequestParam (required=false) Integer size ){
         
-        if (size==0&&page==0)
+        if (size==null&&page==null)
         {
             page=0;
-            size=6;
+            size=5;
         }
         
         List<ResourceNameDto> receipes=resourceService.findByFirstLetters(letters, ingredientOrResource,page, size);
@@ -59,9 +62,13 @@ public class ResourceController {
     @RequestMapping(value = "/resource/addnoderesource", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<String> addNodeResource(@RequestParam String name, @RequestParam String ingredientOrResource, 
-            @RequestParam String measuring, @RequestParam String nodeId){
-         String resourceId=resourceService.createNodeResource(name, nodeId, measuring, ingredientOrResource);
-     return new ResponseEntity<>(resourceId, HttpStatus.OK);
+            @RequestParam String nodeId){
+        String resourceId=resourceService.createNodeResource(name, nodeId, ingredientOrResource);
+        if (resourceId!=null)
+        {
+            return new ResponseEntity<>(resourceId, HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
     

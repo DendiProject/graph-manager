@@ -74,6 +74,18 @@ public class TagControllerTest {
     @Test
     public void getReceipesByTags() throws Exception
     {
+        Receipe receipe = new Receipe();
+        receipe.setName("meat");
+        Receipe saved=receipeRepository.save(receipe);
+        receipeId=saved.getReceipeId();
+        MockHttpServletRequestBuilder request3 = MockMvcRequestBuilders
+                .post("/receipe/addtag/"+saved.getReceipeId());
+        request3.param("tagName", "dinner");
+        request3.accept(MediaType.APPLICATION_JSON);
+        request3.contentType(MediaType.APPLICATION_JSON);
+        ResultActions result3 = mockMvc.perform(request3)
+                 .andExpect(MockMvcResultMatchers.status().isOk());
+        
         Receipe receipe1 = new Receipe();
         receipe1.setName("meat");
         Receipe saved1=receipeRepository.save(receipe1);
@@ -89,10 +101,21 @@ public class TagControllerTest {
         request.accept(MediaType.APPLICATION_JSON);
         request.contentType(MediaType.APPLICATION_JSON);
         MvcResult  result = mockMvc.perform(request).andReturn(); 
-        String expected = "[{receipeId:"+receipe1.getReceipeId()+"},{receipeId:"+receipe2.getReceipeId()+"}]";
-        JSONAssert.assertEquals( expected, result.getResponse().getContentAsString(), false);
+        System.out.println(result.getResponse().getContentAsString());
+        //String expected = "[{receipeId:"+receipe1.getReceipeId()+"},{receipeId:"+receipe2.getReceipeId()+"}]";
+        //JSONAssert.assertEquals( expected, result.getResponse().getContentAsString(), false);
         /*ResultActions result = mockMvc.perform(request)
                  .andExpect(MockMvcResultMatchers.status().isOk());*/
+        
+        MockHttpServletRequestBuilder request2 = MockMvcRequestBuilders
+                .get("/tag/getbyletters/dinn");
+        request2.param("page", "0");
+        request2.param("size", "5");
+        request2.accept(MediaType.APPLICATION_JSON);
+        request2.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result2= mockMvc.perform(request2).andReturn();
+        System.out.println("TAGS");
+        System.out.println(result2.getResponse().getContentAsString());
     }
     
     @Test

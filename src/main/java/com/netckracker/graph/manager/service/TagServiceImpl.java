@@ -36,27 +36,30 @@ public class TagServiceImpl implements TagService{
     @Transactional
     public void addTag(String receipeId, String tagName) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        Tags tag=tagRepository.findByName(tagName);
-        if (tag==null)
+        if (receipe!=null)
         {
-            Tags newTag=new Tags();
-            newTag.setName(tagName);
-            Tags saved=tagRepository.save(newTag);
-            receipe.getTagList().add(saved);            
-        }
-        else 
-        {
-             receipe.getTagList().add(tag); 
-        }
-        receipeRepository.save(receipe);
+            Tags tag=tagRepository.findByName(tagName);
+            if (tag==null)
+            {
+                Tags newTag=new Tags();
+                newTag.setName(tagName);
+                Tags saved=tagRepository.save(newTag);
+                receipe.getTagList().add(saved);            
+            }
+            else 
+            {
+                 receipe.getTagList().add(tag); 
+            }
+            receipeRepository.save(receipe);
+        }        
     }
 
     @Override
-    public List<ReceipeDto> findByTag(String tagName, int page, int size) {
+    public List<ReceipeDto> findByTag(String tagName, Integer page, Integer size) {
         Tags tag=tagRepository.findByName(tagName);
         if (tag!=null)
         {
-            List<Receipe> receipes=receipeRepository.findByTag(tag.getTagId(), new PageRequest(page, size)).getContent();
+            List<Receipe> receipes=receipeRepository.findByTag(tag.getTagId(), new PageRequest(page.intValue(), size.intValue())).getContent();
             return receipes.stream()
                .map(receipe->convertor.convertReceipeToDto(receipe))
                .collect(Collectors.toList());
@@ -65,8 +68,8 @@ public class TagServiceImpl implements TagService{
     }
 
     @Override
-    public List<TagsDto> findByFirstLetters(String letters, int page, int size) {
-        List<Tags> tags=tagRepository.findFirst10ByNameStartingWith(letters, new PageRequest(page, size)).getContent();
+    public List<TagsDto> findByFirstLetters(String letters, Integer page, Integer size) {
+        List<Tags> tags=tagRepository.findFirst10ByNameStartingWith(letters, new PageRequest(page.intValue(), size.intValue())).getContent();
         return tags.stream()
                .map(tag->convertor.convertTagsToDto(tag))
                .collect(Collectors.toList());

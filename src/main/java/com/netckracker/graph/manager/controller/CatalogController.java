@@ -6,7 +6,9 @@
 package com.netckracker.graph.manager.controller;
 
 import com.netckracker.graph.manager.model.Catalog;
+import com.netckracker.graph.manager.modelDto.TagsDto;
 import com.netckracker.graph.manager.service.CatalogService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -42,12 +44,26 @@ public class CatalogController {
         {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-         else   return new ResponseEntity<>(catalog, HttpStatus.OK);
-            
+         else   return new ResponseEntity<>(catalog, HttpStatus.OK);            
     }    
     
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-         public ResponseEntity<String> testGet() {
-        return new ResponseEntity<>("sucsess", HttpStatus.OK);
+    @RequestMapping(value = "/catalog/getbyletters/{letters}",method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public  ResponseEntity<?> getCatalogsByLetters(@PathVariable  String  letters, @RequestParam(required=false, value="page" ) Integer page,
+           @RequestParam(required=false, value="size" ) Integer size  ){
+        
+        if (size==null&&page==null)
+        {
+            page=0;
+            size=6;
+        }
+        
+        List<Catalog> catalogs=catalogService.findByLetters(letters, page, size);
+        if (catalogs.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else{           
+            return new ResponseEntity<>(catalogs, HttpStatus.OK);
+        }
     }
 }

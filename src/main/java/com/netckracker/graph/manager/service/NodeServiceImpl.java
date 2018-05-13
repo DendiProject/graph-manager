@@ -16,13 +16,24 @@ import com.netckracker.graph.manager.modelDto.GraphDto;
 import com.netckracker.graph.manager.modelDto.NodeDto;
 import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
+import com.netckracker.graph.manager.parallelization.GraphParallelization;
 import com.netckracker.graph.manager.repository.EdgesRepository;
 import com.netckracker.graph.manager.repository.NodeRepository;
 import com.netckracker.graph.manager.repository.NodeResourcesRepository;
 import com.netckracker.graph.manager.repository.ReceipeRepository;
 import com.netckracker.graph.manager.repository.ReceipeVersionRepository;
 import com.netckracker.graph.manager.repository.ResourcesRepository;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,16 +65,28 @@ public class NodeServiceImpl implements NodeService{
     private ResourceService resourceService;
     @Autowired
     private CatalogService catalogService;
-
+    @Autowired
+    private GraphParallelization parallelization;
+    @Autowired
+    private TopOfReceipesService topService;
+    
     @Override
     @Transactional
     public String createNode(String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
-        Node node=new Node();
-        node.setVersion(version);
-        Node savedNode=nodeRepository.save(node);
-        return savedNode.getNodeId();
+        if (receipe!=null)
+        {
+            ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version!=null)
+            {
+                Node node=new Node();
+                node.setVersion(version);
+                Node savedNode=nodeRepository.save(node);
+                return savedNode.getNodeId();
+            }
+            else return null;
+        }        
+        else return null;
     }
 
     @Override
@@ -71,28 +94,44 @@ public class NodeServiceImpl implements NodeService{
     public void createEdge(String startNodeId, String endNodeId) {
         Node startNode=nodeRepository.findByNodeId(startNodeId);
         Node endNode=nodeRepository.findByNodeId(endNodeId);
-        Edges edge=new Edges();
-        edge.setStartNode(startNode);
-        edge.setEndNode(endNode);
-        edgesRepository.save(edge);
+        if (startNode!=null&&endNode!=null)
+        {
+            Edges edge1=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
+            Edges edge2=edgesRepository.findByStartNodeAndEndNode(endNode, startNode);
+            if (edge1==null&&edge2==null){
+                Edges edge=new Edges();
+                edge.setStartNode(startNode);
+                edge.setEndNode(endNode);
+                edgesRepository.save(edge);
+            }   
+        }             
     }
 
     @Override
     @Transactional
-    public void addInputOrOutputResourcesToNode(String nodeId, List<ResourceDto> resources, String inputOrOutput) {
-        
-        Node node=nodeRepository.findByNodeId(nodeId);
-        
-        for (int i=0; i<resources.size(); i++)
+    public void addInputOrOutputResourcesToNode(String nodeId, List<ResourceDto> resources, String inputOrOutput) {        
+        Node node=nodeRepository.findByNodeId(nodeId);    
+        if (node!=null)
         {
-            NodeResources nodeResource=new NodeResources();
-            Resources resource=resourcesRepository.findByResourceId(resources.get(i).getResourceId());
-            nodeResource.setInputOrOutput(inputOrOutput);
-            nodeResource.setNode(node);
-            nodeResource.setResource(resource);
-            nodeResource.setNumberOfResource(resources.get(i).getResourceNumber());
-            nodeResourcesRepository.save(nodeResource);
-        }      
+            for (int i=0; i<resources.size(); i++)
+            {
+                NodeResources nodeResource=new NodeResources();
+                if (resources.get(i).getResourceId()!=null)
+                {
+                    Resources resource=resourcesRepository.findByResourceId(resources.get(i).getResourceId());
+                    nodeResource.setResource(resource);
+                }
+                if (resources.get(i).getPreviousNodeId()!=null)
+                {
+                    Node previousNode=nodeRepository.findByNodeId(resources.get(i).getPreviousNodeId());
+                    nodeResource.setPreviousNode(previousNode);
+                }            
+                nodeResource.setInputOrOutput(inputOrOutput);
+                nodeResource.setNode(node);            
+                nodeResource.setNumberOfResource(resources.get(i).getResourceNumber());
+                nodeResourcesRepository.save(nodeResource);
+            }      
+        }        
    }    
 
     @Override
@@ -109,48 +148,60 @@ public class NodeServiceImpl implements NodeService{
     @Override
     public GraphDto getReceipeGraph(String receipeId, String userId) {
         Receipe receipe=receipeRepository.findByReceipeId(receipeId);
-        ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
-        GraphDto graph=new GraphDto();
-        graph.setReceipeName(receipe.getName());
-        List<Node> nodes=nodeRepository.findByVersion(version);
-        List<NodeResources> resources=nodeResourcesRepository.findByVersion(version);
-        for (int i=0; i<resources.size(); i++)
+        if (receipe!=null)
         {
-            if (resources.get(i).getResource().getIngredientOrResource().equals("ingredient"))
+            topService.increaseCounter(receipe, userId);
+            ReceipeVersion version = versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version==null)
             {
-                ResourceDto ingredient=convertor.convertNodeResourceToDto(resources.get(i));
-                graph.getIndredients().add(ingredient);
+                version=versionRepository.findByReceipeAndIsMainVersion(receipe, true);
             }
-            if (resources.get(i).getResource().getIngredientOrResource().equals("resource"))
+            if (version!=null)
             {
-                ResourceDto resource=convertor.convertNodeResourceToDto(resources.get(i));
-                graph.getResources().add(resource);
-            }
-        }     
-        List<NodeDto> nodeDtos=nodes.stream().map(node->convertor.convertNodeToDto(node))
-               .collect(Collectors.toList());
-        graph.setNodes(nodeDtos);
-        
-        for(int i=0; i<nodes.size();i++)
-        {
-            for (int j=0;j<nodes.size(); j++)
-            {
-                Edges edge=edgesRepository.findByStartNodeAndEndNode(nodes.get(i), nodes.get(j));
-                if (edge!=null)
+                GraphDto graph=new GraphDto();
+                graph.setReceipeName(receipe.getName());
+                List<Node> nodes=nodeRepository.findByVersion(version);
+                List<NodeResources> resources=nodeResourcesRepository.findByVersion(version);
+                for (int i=0; i<resources.size(); i++)
                 {
-                    graph.getEdges().add(convertor.convertEgdeToDto(edge));
-                }
-                else 
-                {
-                    Edges edge1=edgesRepository.findByStartNodeAndEndNode(nodes.get(j), nodes.get(i));
-                    if (edge1!=null)
+                    if (resources.get(i).getResource().getIngredientOrResource().equals("ingredient"))
                     {
-                    graph.getEdges().add(convertor.convertEgdeToDto(edge1));
+                        ResourceDto ingredient=convertor.convertNodeResourceToDto(resources.get(i));
+                        graph.getIndredients().add(ingredient);
                     }
-                }                
-            }            
-        }        
-        return graph;
+                    if (resources.get(i).getResource().getIngredientOrResource().equals("resource"))
+                    {
+                        ResourceDto resource=convertor.convertNodeResourceToDto(resources.get(i));
+                        graph.getResources().add(resource);
+                    }
+                }     
+                List<NodeDto> nodeDtos=nodes.stream().map(node->convertor.convertNodeToDto(node))
+                       .collect(Collectors.toList());
+                graph.setNodes(nodeDtos);
+
+                for(int i=0; i<nodes.size();i++)
+                {
+                    for (int j=0;j<nodes.size(); j++)
+                    {
+                        Edges edge=edgesRepository.findByStartNodeAndEndNode(nodes.get(i), nodes.get(j));
+                        if (edge!=null)
+                        {                    
+                            graph.getEdges().add(convertor.convertEgdeToDto(edge));
+                        }
+                        else 
+                        {
+                            Edges edge1=edgesRepository.findByStartNodeAndEndNode(nodes.get(j), nodes.get(i));
+                            if (edge1!=null)
+                            {
+                            graph.getEdges().add(convertor.convertEgdeToDto(edge1));
+                            }
+                        }                
+                    }            
+                }        
+                return graph;
+            }
+        }   
+        return null;
     }
 
     @Override
@@ -159,6 +210,16 @@ public class NodeServiceImpl implements NodeService{
         Node node=nodeRepository.findByNodeId(nodeId);
         if (node!=null)
         {
+            List<Edges> edges=edgesRepository.findByStartNodeOrEndNode(node, node);
+            for (int i=0; i<edges.size();i++)
+            {
+                edgesRepository.delete(edges.get(i));
+            }
+            List<NodeResources> resources =nodeResourcesRepository.findByNode(node);
+            for (int i=0; i<resources.size();i++)
+            {
+                nodeResourcesRepository.delete(resources.get(i));
+            }
             nodeRepository.delete(node);
         }
     }
@@ -168,11 +229,20 @@ public class NodeServiceImpl implements NodeService{
     public void deleteEdge(String startNodeId, String endNodeId) {
         Node startNode=nodeRepository.findByNodeId(startNodeId);
         Node endNode=nodeRepository.findByNodeId(endNodeId);
-        Edges edge=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
-        if (edge!=null)
+        if (startNode!=null&&endNode!=null)
         {
-            edgesRepository.delete(edge);
-        }
+            Edges edge=edgesRepository.findByStartNodeAndEndNode(startNode, endNode);
+            if (edge!=null)
+            {
+                edgesRepository.delete(edge);
+            }
+            else 
+            {
+                edge=edgesRepository.findByStartNodeAndEndNode(endNode, startNode);
+                if (edge!=null)
+                    edgesRepository.delete(edge);
+            }
+        }        
     } 
 
     @Override
@@ -191,7 +261,7 @@ public class NodeServiceImpl implements NodeService{
         Node node=nodeRepository.findByNodeId(nodeId);
         if (node!=null)
         {
-            List<NodeResources> resources = nodeResourcesRepository.findByInputOutputAndNode(inputOrOutput,ingredientOrResource, nodeId);
+            List<NodeResources> resources = nodeResourcesRepository.findByInputOutputAndNode(inputOrOutput,ingredientOrResource, node.getNodeId());
             return resources.stream()
                .map(resource->convertor.convertNodeResourceToDto(resource))
                .collect(Collectors.toList());
@@ -206,6 +276,7 @@ public class NodeServiceImpl implements NodeService{
         /*Создаем каталог и рецепт*/
         String catalogId=catalogService.createCatalog("Пироги", "description");
         ReceipeDto receipe=receipeService.createReceipe("Шарлотка", "description", catalogId, userId, true);
+        receipeId=receipe.getReceipeId();
         
         /*Создаем ингредиенты рецепта*/
         String ingredientId1=resourceService.createResource("Мука", userId, "г", "ingredient", "12345");
@@ -269,8 +340,8 @@ public class NodeServiceImpl implements NodeService{
         addNodePicture(nodeId11, "nodepictureId11");
         
         /*Создаем связи*/
-        createEdge(nodeId1, nodeId2);
         createEdge(nodeId1, nodeId3);
+        createEdge(nodeId2, nodeId3);
         createEdge(nodeId3, nodeId4);
         createEdge(nodeId4, nodeId5);
         createEdge(nodeId5, nodeId7);
@@ -284,4 +355,229 @@ public class NodeServiceImpl implements NodeService{
         return graph;
         
     }
+
+    @Override
+    public GraphDto getReceipeParallelGraph(String receipeId, String userId) {
+        GraphDto graph;
+        Receipe receipe=receipeRepository.findByReceipeId(receipeId);
+        if (receipe!=null)
+        {
+            ReceipeVersion version =versionRepository.findByReceipeAndUserId(receipe, userId);
+            if (version==null)
+            {
+                ReceipeVersion mainVersion=versionRepository.findByReceipeAndIsMainVersion(receipe, true);           
+                ReceipeVersion newVersion=new ReceipeVersion();
+                newVersion.setIsMainVersion(false);
+                newVersion.setUserId(userId);
+                newVersion.setReceipe(receipe);
+                ReceipeVersion savedVersion=versionRepository.save(newVersion);
+                    copyReceipeVersion(mainVersion, savedVersion);
+                    if (savedVersion.isIsParalell()==false)
+                    {
+                        parallelization.paralellGraph(savedVersion);
+                        savedVersion.setIsParalell(true);
+                        versionRepository.save(savedVersion);
+                    }                
+                    graph=getReceipeGraph(receipe.getReceipeId(), savedVersion.getUserId());
+                    return graph;
+            }
+            else 
+            {
+                if (version.isIsParalell()==false)
+                {
+                     parallelization.paralellGraph(version);
+                     version.setIsParalell(true);
+                     versionRepository.save(version);
+                }
+
+                graph=getReceipeGraph(receipe.getReceipeId(), version.getUserId());
+                return graph;
+            }            
+        }    
+        else return null;
+    }
+    
+    @Override
+    @Transactional
+    public void copyReceipeVersion(ReceipeVersion fromVersion, ReceipeVersion toVersion) 
+    {
+        Map<Node, Node> oldAndNewNodes=new HashMap<>();
+        List<Node> nodes=nodeRepository.findByVersion(fromVersion);
+        List<NodeResources> receipeResources=nodeResourcesRepository.findByVersion(fromVersion);
+        Map<NodeResources, NodeResources> oldAndNewResources=new HashMap<>();
+        
+        /*копируем ресурсы рецепта*/
+        for (int i=0; i<receipeResources.size(); i++)
+        {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream ous = new ObjectOutputStream(baos);
+                ous.writeObject(receipeResources.get(i));
+                ous.close();
+                
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                NodeResources nodeResource=(NodeResources)ois.readObject();
+                nodeResource.setVersion(toVersion);
+                nodeResource.setNodeResourceId(null);
+                
+                NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                oldAndNewResources.put(receipeResources.get(i), saved);
+            } catch (IOException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        /*копируем ноды*/
+        for (int i=0; i<nodes.size(); i++)
+        {
+            ObjectOutputStream ous = null;
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ous = new ObjectOutputStream(baos);
+                ous.writeObject(nodes.get(i));
+                ous.close();
+                ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                Node node=(Node)ois.readObject();
+                node.setNodeId(null);
+                node.setVersion(toVersion);
+                Node saved=nodeRepository.save(node);
+                System.out.println(saved.getNodeId());
+                oldAndNewNodes.put(nodes.get(i), saved);
+            } catch (IOException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    ous.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
+        /*копируем ресурсы ноды*/
+        List<NodeResources> resources=new ArrayList<>();
+        for (int i=0; i<nodes.size(); i++)
+        {
+            List<NodeResources> nodeResources=nodeResourcesRepository.findByNode(nodes.get(i));
+            
+            for (int j=0; j<nodeResources.size(); j++)
+            {
+                ObjectOutputStream ous1 = null;
+                try {
+                    ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+                    ous1 = new ObjectOutputStream(baos1);
+                    ous1.writeObject(nodeResources.get(j));
+                    ous1.close();
+                    ByteArrayInputStream bais1= new ByteArrayInputStream(baos1.toByteArray());
+                    ObjectInputStream ois1 = new ObjectInputStream(bais1);
+                    NodeResources nodeResource=(NodeResources)ois1.readObject();
+                    if (nodeResource.getNode()!=null)
+                    {
+                        nodeResource.setNode(oldAndNewNodes.get(nodes.get(i)));
+                    }   if (nodeResource.getVersion()!=null)
+                    {
+                        nodeResource.setVersion(toVersion);
+                    }   if (nodeResource.getPreviousNode()!=null)
+                    {
+                        nodeResource.setPreviousNode(oldAndNewNodes.get(nodeResource.getPreviousNode()));
+                    }   nodeResource.setNodeResourceId(null);
+                    NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                    resources.add(saved);
+                } catch (IOException ex) {
+                    Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    try {
+                        ous1.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(NodeServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+
+        /*копируем связи*/
+        for(int i=0; i<nodes.size();i++)
+        {
+            for (int j=0;j<nodes.size(); j++)
+            {
+                Edges edge=edgesRepository.findByStartNodeAndEndNode(nodes.get(i), nodes.get(j));
+                if (edge!=null)
+                {
+                    Node startNode=oldAndNewNodes.get(edge.getStartNode());
+                    Node endNode=oldAndNewNodes.get(edge.getEndNode());
+                    createEdge(startNode.getNodeId(), endNode.getNodeId());
+                }
+                else 
+                {
+                    Edges edge1=edgesRepository.findByStartNodeAndEndNode(nodes.get(j), nodes.get(i));
+                    if (edge1!=null)
+                    {
+                        Node startNode=oldAndNewNodes.get(edge1.getStartNode());
+                        Node endNode=oldAndNewNodes.get(edge1.getEndNode());
+                        createEdge(startNode.getNodeId(), endNode.getNodeId());
+                    }
+                }                
+            }            
+        }
+    }
+
+    @Transactional
+    @Override
+    public void addNodeLabel(String nodeId, String label) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        if (node!=null)
+        {
+            node.setLabel(label);
+            nodeRepository.save(node);
+        }
+    }
+
+    @Override
+    public boolean isNodeExcist(String nodeId) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        if (node!=null)
+        {
+            return true;
+        }
+        else return false;
+    }
+
+    @Override
+    @Transactional
+    public Node getDefaultNode() {
+        Node node=nodeRepository.findByNodeId("defaultNodeId");
+        if (node!=null)
+        {
+            return node;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isLastNode(String nodeId) {
+        Node node=nodeRepository.findByNodeId(nodeId);
+        if (node.getVersion()!=null)
+        {
+            Node lastNode=nodeRepository.findByLastNode(node.getVersion().getVersionId());
+            if (lastNode!=null&node!=null)
+            {
+                if (lastNode.getNodeId().equals(node.getNodeId()));
+                {
+                    return true;
+                }
+            }
+        }        
+        return false;
+    }
+    
+    
+    
 }

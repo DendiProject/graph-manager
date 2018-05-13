@@ -36,7 +36,7 @@ public class Receipe implements Serializable {
     @Column(name = "name") 
     private String name;
     
-    @Column(name = "description") 
+    @Column(name = "description_id") 
     private String description;
     
     @Column(name = "is_public") 
