@@ -6,6 +6,7 @@
 package com.netckracker.graph.manager.model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -18,7 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class ReceipeVersion implements Serializable {    
 
     @Id   
-    @Column(name = "version_id") 
+    @Column(name = "version_id", unique=true) 
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String versionId;
@@ -75,5 +76,30 @@ public class ReceipeVersion implements Serializable {
     public void setIsMainVersion(boolean isMainVersion) {
         this.isMainVersion = isMainVersion;
     }  
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + Objects.hashCode(this.versionId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ReceipeVersion other = (ReceipeVersion) obj;
+        if (!Objects.equals(this.versionId, other.versionId)) {
+            return false;
+        }
+        return true;
+    }
     
 }

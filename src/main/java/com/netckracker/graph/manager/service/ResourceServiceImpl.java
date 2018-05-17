@@ -68,6 +68,14 @@ public class ResourceServiceImpl implements ResourceService{
         else return null;
     }
 
+    @Override
+    public List<ResourceNameDto> findAll() {
+        List<Resources> resources=resourcesRepository.findAll();
+        return resources.stream()
+               .map(resource->convertor.convertResourceToResourceNameDto(resource))
+               .collect(Collectors.toList());
+    }
+    
     
     
 }

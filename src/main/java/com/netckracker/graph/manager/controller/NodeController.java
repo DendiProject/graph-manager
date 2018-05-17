@@ -8,6 +8,7 @@ package com.netckracker.graph.manager.controller;
 import com.netckracker.graph.manager.model.Edges;
 import com.netckracker.graph.manager.modelDto.GraphDto;
 import com.netckracker.graph.manager.modelDto.NodeDto;
+import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ReceipeService;
@@ -168,7 +169,7 @@ public class NodeController {
         }
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);     
     }
-    @RequestMapping(value = "/graph/getparallelgraph", method = RequestMethod.GET, 
+    @RequestMapping(value = "/graph/getparallelgraph", method = RequestMethod.GET ,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> getParallelGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
         if (receipeService.isVersionCompleted(receipeId)==true)
@@ -185,14 +186,14 @@ public class NodeController {
     
     @RequestMapping(value = "/graph/getnotcompletedgraph", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
-    public ResponseEntity<?> getNotCompletedGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
+    public ResponseEntity<?> getNotCompletedGraph( @RequestParam ("userId") String userId){
         
-            GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
-            if (graph==null)
+            ReceipeDto receipe=nodeService.getNotCompletedReceipe(userId);
+            if (receipe==null)
             {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            else return new ResponseEntity<>(graph, HttpStatus.OK);  
+            else return new ResponseEntity<>(receipe, HttpStatus.OK);  
     }
     
     @RequestMapping(value = "/graph/gettestgraph", method = RequestMethod.GET)

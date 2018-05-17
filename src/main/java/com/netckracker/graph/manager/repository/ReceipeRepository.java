@@ -7,7 +7,9 @@ package com.netckracker.graph.manager.repository;
 
 import com.netckracker.graph.manager.model.Catalog;
 import com.netckracker.graph.manager.model.Receipe;
+import com.netckracker.graph.manager.model.ReceipeVersion;
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -106,5 +108,9 @@ public interface ReceipeRepository extends JpaRepository <Receipe, String>{
     Page<Receipe> getTopByUserAndCatalog(@Param("userId") String userId,@Param("catalogId") String catalogId,
             Pageable pageable);
     
+    @Query(value="SELECT  r.* FROM  Receipe r JOIN ReceipeVersion v ON v.receipe_id=r.receipe_id "
+            + "WHERE v.user_id=:userId AND r.is_completed=false AND r.is_deleted=false",
+            nativeQuery=true)
+    Receipe findNotCompletedReceipe(@Param("userId") String userId);
 
 }

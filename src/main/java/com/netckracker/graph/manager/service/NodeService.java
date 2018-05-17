@@ -8,6 +8,7 @@ package com.netckracker.graph.manager.service;
 import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.model.ReceipeVersion;
 import com.netckracker.graph.manager.modelDto.GraphDto;
+import com.netckracker.graph.manager.modelDto.ReceipeDto;
 import com.netckracker.graph.manager.modelDto.ResourceDto;
 import java.util.List;
 
@@ -32,4 +33,5 @@ public interface NodeService {
     public boolean isNodeExcist(String nodeId);
     public Node getDefaultNode();
     public boolean isLastNode(String nodeId);
+    public ReceipeDto getNotCompletedReceipe(String userId);
 }

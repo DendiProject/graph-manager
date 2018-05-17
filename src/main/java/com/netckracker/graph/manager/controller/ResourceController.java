@@ -42,12 +42,12 @@ public class ResourceController {
             size=5;
         }
         
-        List<ResourceNameDto> receipes=resourceService.findByFirstLetters(letters, ingredientOrResource,page, size);
-        if (receipes.isEmpty()){
+        List<ResourceNameDto> resources=resourceService.findByFirstLetters(letters, ingredientOrResource,page, size);
+        if (resources.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else{           
-            return new ResponseEntity<>(receipes, HttpStatus.OK);
+            return new ResponseEntity<>(resources, HttpStatus.OK);
         }
     }
     
@@ -71,5 +71,18 @@ public class ResourceController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
+    
+    @RequestMapping(value = "/resource/getall",method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public  ResponseEntity<?> getResources(){
+        
+        List<ResourceNameDto> resources=resourceService.findAll();
+        if (resources.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else{           
+            return new ResponseEntity<>(resources, HttpStatus.OK);
+        }
+    }
     
 }

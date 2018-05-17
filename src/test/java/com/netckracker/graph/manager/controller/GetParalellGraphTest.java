@@ -64,7 +64,7 @@ public class GetParalellGraphTest {
     @Before
     public void createReceipeTest()
     {
-        String userId="11119";
+        String userId="167811999919";
           
                 /*Создаем каталог и рецепт*/
         String catalogId=catalogService.createCatalog("Пироги", "description");
@@ -342,9 +342,6 @@ public class GetParalellGraphTest {
         nodeService.createEdge(nodeId9, nodeId10);
         nodeService.createEdge(nodeId10, nodeId11);
         nodeService.createEdge(nodeId3, nodeId6);
-        
-        
-
     }
     
     @Test
@@ -354,7 +351,7 @@ public class GetParalellGraphTest {
         MockHttpServletRequestBuilder request2 = MockMvcRequestBuilders
                 .get("/graph/getnotcompletedgraph");
         request2.param("receipeId",receipeId);  
-        request2.param("userId","11119"); 
+        request2.param("userId","167811999919"); 
         request2.accept(MediaType.APPLICATION_JSON);
         request2.contentType(MediaType.APPLICATION_JSON);
         ResultActions result2 = mockMvc.perform(request2)
@@ -375,22 +372,21 @@ public class GetParalellGraphTest {
         System.out.println(result.andReturn().getResponse().getContentAsString());
     }
     
-    @Test
+  /*  @Test
     public void getNotCompletedReceipe() throws Exception
     {
         String userId="184113feg3f19";
         MockHttpServletRequestBuilder request2 = MockMvcRequestBuilders
                 .get("/graph/getnotcompletedgraph");
-        request2.param("receipeId",receipeId);  
         request2.param("userId",userId); 
         request2.accept(MediaType.APPLICATION_JSON);
         request2.contentType(MediaType.APPLICATION_JSON);
-        /*ResultActions result2 = mockMvc.perform(request2)
-                 .andExpect(MockMvcResultMatchers.status().isNotFound()); */
-        ResultActions result = mockMvc.perform(request2)
+        ResultActions result2 = mockMvc.perform(request2)
+                 .andExpect(MockMvcResultMatchers.status().isNotFound()); 
+     /*   ResultActions result = mockMvc.perform(request2)
                  .andExpect(MockMvcResultMatchers.status().isOk()); 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-    }
+       // System.out.println(result.andReturn().getResponse().getContentAsString());*/
+    //}
 
 
     

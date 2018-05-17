@@ -8,6 +8,7 @@ package com.netckracker.graph.manager.repository;
 import com.netckracker.graph.manager.model.Node;
 import com.netckracker.graph.manager.model.NodeResources;
 import com.netckracker.graph.manager.model.ReceipeVersion;
+import com.netckracker.graph.manager.model.Resources;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,8 @@ public interface NodeResourcesRepository extends JpaRepository <NodeResources, S
             + "(Select r.resource_id from Resources r where r.ingredient_or_resource=:ingredientResource)",
             nativeQuery = true)
     List<NodeResources> findByIngredients( @Param("ingredientResource") String ingredientResource, @Param ("nodeId")String nodeId);
+    
+    NodeResources findByNodeResourceId(String Id);
+    
+    NodeResources findByResourceAndVersion(Resources resource, ReceipeVersion version);
 }

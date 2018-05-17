@@ -30,8 +30,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -59,12 +61,6 @@ public class NodeServiceImpl implements NodeService{
     private EdgesRepository edgesRepository;
     @Autowired
     private Convertor convertor;
-    @Autowired
-    private ReceipeService receipeService;
-    @Autowired
-    private ResourceService resourceService;
-    @Autowired
-    private CatalogService catalogService;
     @Autowired
     private GraphParallelization parallelization;
     @Autowired
@@ -114,7 +110,7 @@ public class NodeServiceImpl implements NodeService{
         if (node!=null)
         {
             for (int i=0; i<resources.size(); i++)
-            {
+            {               
                 NodeResources nodeResource=new NodeResources();
                 if (resources.get(i).getResourceId()!=null)
                 {
@@ -272,85 +268,8 @@ public class NodeServiceImpl implements NodeService{
     @Override
     @Transactional
     public GraphDto getReceipeTestGraph(String receipeId, String userId) {
-        userId="1111";
-        /*Создаем каталог и рецепт*/
-        String catalogId=catalogService.createCatalog("Пироги", "description");
-        ReceipeDto receipe=receipeService.createReceipe("Шарлотка", "description", catalogId, userId, true);
-        receipeId=receipe.getReceipeId();
-        
-        /*Создаем ингредиенты рецепта*/
-        String ingredientId1=resourceService.createResource("Мука", userId, "г", "ingredient", "12345");
-        String ingredientId2=resourceService.createResource("Яйцо", userId, "шт", "ingredient", "12346");
-        String ingredientId3=resourceService.createResource("Сахар", userId, "г", "ingredient", "12347");
-        String ingredientId4=resourceService.createResource("Яблоко", userId, "шт", "ingredient", "12348");
-        String ingredientId5=resourceService.createResource("Соль", userId, "г", "ingredient", "12348");
-        String ingredientId6=resourceService.createResource("Сода", userId, "г", "ingredient", "12348");
-        
-        /*Создаем ресурсы рецепта*/
-        String resourceId1=resourceService.createResource("Духовка", userId, "шт", "resource", "12345");
-        String resourceId2=resourceService.createResource("Форма для запекания", userId, "шт", "resource", "12346");
-        
-        /*Добавляем ингредиенты к рецепту*/
-        receipeService.addReceipeResources(receipeId, userId, ingredientId1, 300);
-        receipeService.addReceipeResources(receipeId, userId, ingredientId2, 4);
-        receipeService.addReceipeResources(receipeId, userId, ingredientId3, 300);
-        receipeService.addReceipeResources(receipeId, userId, ingredientId4, 5);
-        receipeService.addReceipeResources(receipeId, userId, ingredientId5, 10);
-        receipeService.addReceipeResources(receipeId, userId, ingredientId6, 10);
-        receipeService.addReceipeResources(receipeId, userId, resourceId1, 1);
-        receipeService.addReceipeResources(receipeId, userId, resourceId2, 1);
-        
-        /*Создаем ноды рецепта*/
-        String nodeId1=createNode(receipe.getReceipeId(), userId);
-        String nodeId2=createNode(receipe.getReceipeId(), userId);
-        String nodeId3=createNode(receipe.getReceipeId(), userId);
-        String nodeId4=createNode(receipe.getReceipeId(), userId);
-        String nodeId5=createNode(receipe.getReceipeId(), userId);
-        String nodeId6=createNode(receipe.getReceipeId(), userId);
-        String nodeId7=createNode(receipe.getReceipeId(), userId);
-        String nodeId8=createNode(receipe.getReceipeId(), userId);
-        String nodeId9=createNode(receipe.getReceipeId(), userId);
-        String nodeId10=createNode(receipe.getReceipeId(), userId);
-        String nodeId11=createNode(receipe.getReceipeId(), userId);
-        
-        /*Создаем описание нод*/
-        addNodeDescription(nodeId1, "Отделить белки от желтков.");
-        addNodeDescription(nodeId2, "Белки взбить с половиной стакана сахара.");
-        addNodeDescription(nodeId3, "Желтки взбить с оставшимся сахаром.");
-        addNodeDescription(nodeId4, "Все смешать и добавить муку.");
-        addNodeDescription(nodeId5, "Добавить к предыдущему шагу соль и соду.");
-        addNodeDescription(nodeId6, "Нарезать яблоки.");
-        addNodeDescription(nodeId7, "Добавить к тесту яблоки.");
-        addNodeDescription(nodeId8, "Разогреть духовку.");
-        addNodeDescription(nodeId9, "Залить тесто в форму для выпечки.");
-        addNodeDescription(nodeId10, "Выпекать в духовке 40 мин.");
-        addNodeDescription(nodeId11, "Готово!");
-        
-        /*Додавляем id картинок к нодам*/
-        addNodePicture(nodeId1, "nodepictureId1");
-        addNodePicture(nodeId2, "nodepictureId2");
-        addNodePicture(nodeId3, "nodepictureId3");
-        addNodePicture(nodeId4, "nodepictureId4");
-        addNodePicture(nodeId5, "nodepictureId5");
-        addNodePicture(nodeId6, "nodepictureId6");
-        addNodePicture(nodeId7, "nodepictureId7");
-        addNodePicture(nodeId8, "nodepictureId8");
-        addNodePicture(nodeId9, "nodepictureId9");
-        addNodePicture(nodeId10, "nodepictureId10");
-        addNodePicture(nodeId11, "nodepictureId11");
-        
-        /*Создаем связи*/
-        createEdge(nodeId1, nodeId3);
-        createEdge(nodeId2, nodeId3);
-        createEdge(nodeId3, nodeId4);
-        createEdge(nodeId4, nodeId5);
-        createEdge(nodeId5, nodeId7);
-        createEdge(nodeId6, nodeId7);
-        createEdge(nodeId7, nodeId9);
-        createEdge(nodeId8, nodeId10);
-        createEdge(nodeId9, nodeId10);
-        createEdge(nodeId10, nodeId11);
-        
+        userId="1";
+        Receipe receipe=receipeRepository.findByReceipeId("1");        
         GraphDto graph=getReceipeGraph(receipe.getReceipeId(), userId);
         return graph;
         
@@ -576,6 +495,29 @@ public class NodeServiceImpl implements NodeService{
             }
         }        
         return false;
+    }
+
+    @Override
+    public ReceipeDto getNotCompletedReceipe(String userId) {
+        /*Set<ReceipeVersion> versions=versionRepository.findNotCompletedReceipe(userId);
+        Iterator iter=versions.iterator();
+        while(iter.hasNext())
+        {
+            ReceipeVersion version=(ReceipeVersion) iter.next();
+            System.out.println("no compl "+version.getReceipe().getName());
+        }
+        Iterator iter2=versions.iterator();
+        while(iter2.hasNext())
+        {
+            ReceipeVersion version=(ReceipeVersion) iter2.next();
+            return convertor.convertReceipeToDto(version.getReceipe());
+        }*/
+        Receipe receipe=receipeRepository.findNotCompletedReceipe(userId);
+        if (receipe!=null)
+        {
+            return convertor.convertReceipeToDto(receipe);            
+        }
+        return null;
     }
     
     

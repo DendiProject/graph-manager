@@ -24,7 +24,7 @@ public class Receipe implements Serializable {
     }
 
     @Id   
-    @Column(name = "receipe_id") 
+    @Column(name = "receipe_id", unique=true) 
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String receipeId;

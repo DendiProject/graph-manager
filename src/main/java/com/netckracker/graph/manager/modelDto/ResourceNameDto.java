@@ -12,6 +12,9 @@ package com.netckracker.graph.manager.modelDto;
 public class ResourceNameDto {
     private String resourceId;
     private String name;
+    private String ingredientOrResource;
+    private String measuring;
+    private String pictureId;
 
     public String getName() {
         return name;
@@ -27,6 +30,30 @@ public class ResourceNameDto {
 
     public void setResourceId(String resourceId) {
         this.resourceId = resourceId;
+    }
+
+    public String getIngredientOrResource() {
+        return ingredientOrResource;
+    }
+
+    public void setIngredientOrResource(String ingredientOrResource) {
+        this.ingredientOrResource = ingredientOrResource;
+    }
+
+    public String getMeasuring() {
+        return measuring;
+    }
+
+    public void setMeasuring(String measuring) {
+        this.measuring = measuring;
+    }
+
+    public String getPictureId() {
+        return pictureId;
+    }
+
+    public void setPictureId(String pictureId) {
+        this.pictureId = pictureId;
     }
     
     

@@ -18,6 +18,7 @@ public interface ResourceService {
             String measuring, String ingredientOrResource,String pictureId);
     public List<ResourceNameDto> findByFirstLetters(String letters,String ingredientOrResource,  int page, int size);
     public String createNodeResource(String resourceName, String nodeId,
-           String ingredientOrResource);
+           String ingredientOrResource);    
+    public List<ResourceNameDto> findAll();
 }
 

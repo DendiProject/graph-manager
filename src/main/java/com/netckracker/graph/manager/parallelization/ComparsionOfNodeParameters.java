@@ -43,7 +43,7 @@ public class ComparsionOfNodeParameters implements Handler{
                 for (int j=0; j<nextOutputResources.size(); j++)
                 {
                     if (currentInputResources.get(i).getResource()!=null&nextOutputResources.get(j).getResource()!=null)
-                    {                        
+                    {                       
                         if ((currentInputResources.get(i).getResource().equals(nextOutputResources.get(j).getResource())))
                         {
                             equality++;
@@ -54,6 +54,7 @@ public class ComparsionOfNodeParameters implements Handler{
                     {
                         if (currentInputResources.get(i).getPreviousNode().getNodeId().equals(state.getNextNode().getNodeId()))
                         {                            
+                            System.out.println("equality++");
                             equality++;
                         }                    
                     }   
@@ -61,6 +62,7 @@ public class ComparsionOfNodeParameters implements Handler{
 
             if (equality>0)        
             {  
+                
             }
             else 
             { 

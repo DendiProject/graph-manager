@@ -66,4 +66,18 @@ public class CatalogController {
             return new ResponseEntity<>(catalogs, HttpStatus.OK);
         }
     }
+    
+    @RequestMapping(value = "/catalog/getall",method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public  ResponseEntity<?> getCatalogs(){
+        
+       
+        List<Catalog> catalogs=catalogService.getAll();
+        if (catalogs.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else{           
+            return new ResponseEntity<>(catalogs, HttpStatus.OK);
+        }
+    }
 }

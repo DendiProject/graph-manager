@@ -19,9 +19,9 @@ WITH (
 );
 
 create table Edges (
-edge_id varchar(255) not null, 
-end_node_id varchar(255), 
+edge_id varchar(255) not null,  
 start_node_id varchar(255), 
+end_node_id varchar(255),
 CONSTRAINT edges_pkey PRIMARY KEY (edge_id)    
 )
 WITH (

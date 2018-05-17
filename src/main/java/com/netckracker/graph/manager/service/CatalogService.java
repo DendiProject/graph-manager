@@ -16,4 +16,5 @@ public interface CatalogService {
     public String createCatalog (String name, String descriptionId);
     public Catalog findCatalog(String name);
     List<Catalog> findByLetters(String letters, Integer page, Integer size);
+    List<Catalog> getAll();
 }

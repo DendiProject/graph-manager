@@ -53,4 +53,10 @@ public class CatalogServiceImpl implements CatalogService{
         List<Catalog> catalog=catalogRepository.findFirst10ByNameStartingWith(letters, new PageRequest(page.intValue(), size.intValue())).getContent();
         return catalog;
     }
+
+    @Override
+    public List<Catalog> getAll() {
+        List<Catalog> allList=catalogRepository.findAll();
+        return allList;
+    }
 }

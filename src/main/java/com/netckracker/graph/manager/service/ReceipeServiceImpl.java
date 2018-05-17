@@ -20,7 +20,9 @@ import com.netckracker.graph.manager.repository.NodeResourcesRepository;
 import com.netckracker.graph.manager.repository.ReceipeRepository;
 import com.netckracker.graph.manager.repository.ReceipeVersionRepository;
 import com.netckracker.graph.manager.repository.ResourcesRepository;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +107,6 @@ public class ReceipeServiceImpl implements ReceipeService{
         version.setUserId(userId);
         version.setReceipe(saved);
         versionRepository.save(version);
-                
         return convertor.convertReceipeToDto(saved);
         
     }
@@ -121,13 +122,23 @@ public class ReceipeServiceImpl implements ReceipeService{
             Resources resource=resourcesRepository.findByResourceId(resourceId);        
             if (version!=null&&resource!=null)
             {
-                NodeResources nodeResource=new NodeResources();
-                nodeResource.setResource(resource);
-                nodeResource.setVersion(version);
-                nodeResource.setNumberOfResource(resourceNumber);  
+                NodeResources find=nodeResourcesRepository.findByResourceAndVersion(resource, version);
+                if (find==null)
+                {
+                    NodeResources nodeResource=new NodeResources();
+                    nodeResource.setResource(resource);
+                    nodeResource.setVersion(version);
+                    nodeResource.setNumberOfResource(resourceNumber);  
 
-                NodeResources saved=nodeResourcesRepository.save(nodeResource);
-                return saved.getNodeResourceId();
+                    NodeResources saved=nodeResourcesRepository.save(nodeResource);
+                    return saved.getNodeResourceId();
+                }
+                else 
+                {
+                    find.setNumberOfResource(resourceNumber);
+                    NodeResources savedFind=nodeResourcesRepository.save(find);
+                    return savedFind.getNodeResourceId();
+                }                
             }
             else return null;
         }

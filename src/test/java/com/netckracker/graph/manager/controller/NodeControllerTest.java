@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -75,12 +76,13 @@ public class NodeControllerTest {
     boolean isPublic=true;
     boolean isCompleted=false;
     boolean isDeleted=false;
-    String catalogId;
+    String catalogId=new String();
     
     @Before
     public void setUp() {
         mockMvc = webAppContextSetup(wac).build();
     }
+
 
     @Test
     public void addNodeTest() throws Exception
@@ -224,6 +226,27 @@ public class NodeControllerTest {
         assertEquals("ingredient Id incorrect", resourceId, jsonResource.getString("resourceId"));
         assertEquals("ingredient name incorrecrt", "milk", jsonResource.getString("name"));
         assertEquals("ingredient number incorrecrt","1.0", jsonResource.getString("resourceNumber"));
+    }
+    
+    @Test
+    @DirtiesContext
+    public void getNotCompletedReceipe() throws Exception
+    {
+        
+       String catalog=catalogService.createCatalog("apple pies", "description");
+       ReceipeDto receipe=receipeService.createReceipe("receipe", description, catalog, "192837", true);
+       receipeService.setCompleted(receipe.getReceipeId());
+       ReceipeDto receipe2=receipeService.createReceipe("new Receipe", description, catalog, "192837", true);       
+       MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get("/graph/getnotcompletedgraph");
+        request.param("userId","192837"); 
+        request.accept(MediaType.APPLICATION_JSON);
+        request.contentType(MediaType.APPLICATION_JSON);
+        MvcResult  result = mockMvc.perform(request).andReturn(); 
+        
+        JSONObject jsonReceipe = new JSONObject(result.getResponse().getContentAsString());
+       assertEquals("receipe Id incorrect", receipe2.getReceipeId(), jsonReceipe.getString("receipeId"));
+        
     }
     
 }
