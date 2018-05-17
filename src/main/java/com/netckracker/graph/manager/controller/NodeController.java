@@ -158,16 +158,13 @@ public class NodeController {
     @RequestMapping(value = "/graph/getgraph", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> getGraph( @RequestParam ("userId") String userId, @RequestParam ("receipeId") String receipeId){
-        if (receipeService.isVersionCompleted(receipeId)==true)
-        {
+        
             GraphDto graph=nodeService.getReceipeGraph(receipeId, userId);
             if (graph==null)
             {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
-            else return new ResponseEntity<>(graph, HttpStatus.OK); 
-        }
-        else return new ResponseEntity<>(HttpStatus.NOT_FOUND);     
+            else return new ResponseEntity<>(graph, HttpStatus.OK);                 
     }
     @RequestMapping(value = "/graph/getparallelgraph", method = RequestMethod.GET ,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
