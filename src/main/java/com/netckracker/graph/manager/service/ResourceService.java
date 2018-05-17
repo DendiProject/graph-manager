@@ -20,5 +20,6 @@ public interface ResourceService {
     public String createNodeResource(String resourceName, String nodeId,
            String ingredientOrResource);    
     public List<ResourceNameDto> findAll();
+    public ResourceNameDto getByName(String name);
 }
 

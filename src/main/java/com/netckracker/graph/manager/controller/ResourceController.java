@@ -85,4 +85,17 @@ public class ResourceController {
         }
     }
     
+    @RequestMapping(value = "/resource/getbyname/{name}",method = RequestMethod.GET,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public  ResponseEntity<?> getResourcesByLetters(@PathVariable  String  name ){
+        
+        ResourceNameDto resource=resourceService.getByName(name);
+        if (resource==null){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        else{           
+            return new ResponseEntity<>(resource, HttpStatus.OK);
+        }
+    }
+    
 }

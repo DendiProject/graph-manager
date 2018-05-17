@@ -75,6 +75,16 @@ public class ResourceServiceImpl implements ResourceService{
                .map(resource->convertor.convertResourceToResourceNameDto(resource))
                .collect(Collectors.toList());
     }
+
+    @Override
+    public ResourceNameDto getByName(String name) {
+        Resources resource=resourcesRepository.findByName(name);
+        if (resource!=null)
+        {
+            return convertor.convertResourceToResourceNameDto(resource);
+        }
+        return null;
+    }
     
     
     
