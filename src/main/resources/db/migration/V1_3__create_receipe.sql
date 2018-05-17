@@ -13,17 +13,17 @@ Insert into Resources values ('9', 'resource', 'шт', 'Форма для вып
 
 Insert into ReceipeVersion values ('1', true, false, '1', '1');
 
-Insert into Node  values('1', 'Белки отделить от желтков', 'Белки отделить от желтков', 'nodePictureId1', '1');
-Insert into Node values('2', 'Белки смешать с половиной сахара', 'Белки смешать с половиной сахара', 'nodePictureId2', '1');
-Insert into Node values ('3', 'Желтки смешать с оставшимся сахаром', 'Желтки смешать с оставшимся сахаром', 'nodePictureId3', '1');
-Insert into Node values('4', 'Все смешать и добавить муку', 'Все смешать и добавить муку', 'nodePictureId4', '1');
-Insert into Node values('5', 'К предыдущему шагу добавить соль', 'К предыдущему шагу добавить соль', 'nodePictureId5', '1');
-Insert into Node values('6', 'Нарезать яблоки', 'Нарезать яблоки', 'nodePictureId6', '1');
-Insert into Node values('7', 'Смешать тесто с яблоками', 'Смешать тесто с яблоками', 'nodePictureId7', '1');
-Insert into Node values('8', 'Разогреть духовку', 'Разогреть духовку', 'nodePictureId8', '1');
-Insert into Node values('9', 'Тесто залить в форму для выпечки', 'Тесто залить в форму для выпечки', 'nodePictureId9', '1');
-Insert into Node values('10', 'Выпекать 40 минут', 'Выпекать 40 минут', 'nodePictureId10', '1');
-Insert into Node values('11', 'Готово!', 'Готово!', 'nodePictureId11', '1');
+Insert into Node  values('1', 'Белки отделить от желтков', 'Белки отделить от желтков', 'nodepictureId1', '1');
+Insert into Node values('2', 'Белки смешать с половиной сахара', 'Белки смешать с половиной сахара', 'nodepictureId2', '1');
+Insert into Node values ('3', 'Желтки смешать с оставшимся сахаром', 'Желтки смешать с оставшимся сахаром', 'nodepictureId3', '1');
+Insert into Node values('4', 'Все смешать и добавить муку', 'Все смешать и добавить муку', 'nodepictureId4', '1');
+Insert into Node values('5', 'К предыдущему шагу добавить соль', 'К предыдущему шагу добавить соль', 'nodepictureId5', '1');
+Insert into Node values('6', 'Нарезать яблоки', 'Нарезать яблоки', 'nodepictureId6', '1');
+Insert into Node values('7', 'Смешать тесто с яблоками', 'Смешать тесто с яблоками', 'nodepictureId7', '1');
+Insert into Node values('8', 'Разогреть духовку', 'Разогреть духовку', 'nodepictureId8', '1');
+Insert into Node values('9', 'Тесто залить в форму для выпечки', 'Тесто залить в форму для выпечки', 'nodepictureId9', '1');
+Insert into Node values('10', 'Выпекать 40 минут', 'Выпекать 40 минут', 'nodepictureId10', '1');
+Insert into Node values('11', 'Готово!', 'Готово!', 'nodepictureId11', '1');
 
 Insert into Resources values ('10', 'ingredient', 'шт', 'Белки с сахаром', null, '2', null);
 Insert into Resources values ('11', 'ingredient', 'шт', 'Желтки с сахаром', null, '3', null);
