@@ -13,6 +13,15 @@ public class NodeDto {
     private String nodeId;
     private String description;
     private String pictureId;
+    private String label;
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
     public String getNodeId() {
         return nodeId;
