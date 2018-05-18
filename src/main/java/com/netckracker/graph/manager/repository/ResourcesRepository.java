@@ -21,4 +21,5 @@ public interface ResourcesRepository extends JpaRepository <Resources, String> {
     Resources findByResourceId(String resourceId);
     Resources findByName (String name);
     Page<Resources> findFirst10ByIngredientResourceAndNameStartingWith(String ingredientOrResource ,String resourceName, Pageable pageable);
+ 
 }

@@ -96,3 +96,83 @@ Insert into NodeResources values('37', null,  1,  '6', null, '1', null);
 Insert into NodeResources values('31', null,  1, '8', null, '1', null);
 Insert into NodeResources values('33', null,  5, '7', null, '1', null);
 Insert into NodeResources values('32', null,  1, '9', null, '1', null);
+
+Insert into Catalog values ('2', 'Простые рецепты приготовления рыбы', 'Рыба');
+Insert into Receipe values ('2', 'Нежнейший лосось в соусе', true, false, true, 'Лосось с горчично-сливочным соусом', 'losossoys', '2');
+
+Insert into Resources values ('20', 'ingredient', 'г', 'Филе лосося', null, null, 'losos');
+Insert into Resources values ('21', 'ingredient', 'ст.л.', 'Оливковое масло', null, null, 'oloil');
+Insert into Resources values ('22', 'ingredient', 'ст.л.', 'Лимонный сок', null, null, 'lsok');
+Insert into Resources values ('23', 'ingredient', 'г', 'Белый перец', null, null, 'pbel');
+Insert into Resources values ('24', 'ingredient', 'ст.л.', 'Горчица', null, null, 'gorch');
+Insert into Resources values ('25', 'ingredient', 'мл', 'Сливки', null, null, 'slivki');
+Insert into Resources values ('26', 'ingredient', 'г', 'Мускатный орех', null, null, 'orex');
+Insert into Resources values ('27', 'ingredient', 'г', 'Перец черный', null, null, 'pepper');
+Insert into Resources values ('28', 'resource', 'шт', 'Сотейник', null, null, 'sot');
+
+Insert into ReceipeVersion values ('2', true, false, '2', '2');
+
+Insert into Node  values('20',  'Смешайте в сотейнике сливки, желтки и горчицу. Часто помешивая, доведите до кипения.','Смешайте в сотейнике сливки, желтки и горчицу.', 'preparesoys', '2');
+Insert into Node  values('21', 'Просейте муку', 'Просейте муку', 'prosmyka', '2');
+Insert into Node  values('22', 'Добавьте соль и специи к муку и добавьте в кипящий соус', 'Добавьте соль и специи к муку и добавьте в кипящий соус', 'sauce', '2');
+Insert into Node  values('23', 'Нарежьте филе лосося на стейки бабочки', 'Нарежьте филе лосося', 'lososnarez', '2');
+Insert into Node  values('24', 'Натрите солью и белым перцем, сбрызните лимонным соком, оставьте на 15 минут.', 'Натрите  лосось солью и белым перцем, сбрызните лимонным соком', 'lososspecii', '2');
+Insert into Node  values('25', 'Смажьте кусочки рыбы оливковым маслом и обжарьте на сковороде-гриль до золотистой корочки.', 'Обжарьте филе до золотистой корочки', 'steyk', '2');
+Insert into Node  values('26', 'Нарежьте филе лосося на стейки бабочки', 'Полейте готовые стейки лосося соусом', 'losossoys', '2');
+
+Insert into Resources values ('29', 'ingredient', 'г', 'Просеянная мука', null, null, null);
+Insert into Resources values ('30', 'ingredient', 'г', 'Нарезанное филе лосося', null, '23',null);
+Insert into Resources values ('31', 'ingredient', 'г', 'Филе со специями', null, '24', null);
+Insert into Resources values ('32', 'ingredient', 'г', 'Стейки', null, '25', null);
+Insert into Resources values ('33', 'ingredient', 'г', 'Горчичный соус', null, '22', null);
+
+Insert into Edges values ('11', '20', '21');
+Insert into Edges values ('12', '21', '22');
+Insert into Edges values ('13', '22', '23');
+Insert into Edges values ('14', '23', '24');
+Insert into Edges values ('15', '24', '25');
+Insert into Edges values('16', '25', '26');
+
+Insert into NodeResources values('40', null,  800, '20', null, '2', null);
+Insert into NodeResources values('41', null,  1, '21', null, '2', null);
+Insert into NodeResources values('42', null,  2, '22', null, '2', null);
+Insert into NodeResources values('43', null,  3, '6', null, '2', null);
+Insert into NodeResources values('44', null,  3, '23', null, '2', null);
+Insert into NodeResources values('45', null,  4, '24', null, '2', null);
+Insert into NodeResources values('46', null,  200, '25', null, '2', null);
+Insert into NodeResources values('47', null,  3, '3', null, '2', null);
+Insert into NodeResources values('48', null,  30, '5', null, '2', null);
+Insert into NodeResources values('49', null,  3, '26', null, '2', null);
+Insert into NodeResources values('50', null,  3, '27', null, '2', null);
+Insert into NodeResources values('51', null,  1, '28', null, '2', null);
+
+
+Insert into NodeResources values('52', 'input',  200, '25', '20', null, null);
+Insert into NodeResources values('53', 'input',  2, '3', '20', null, null);
+Insert into NodeResources values('54', 'input',  4, '24', '20', null, null);
+
+
+Insert into NodeResources values('71', 'input',  30, '5', '21', null, null);
+Insert into NodeResources values('55', 'output',  30, '29', '21', null, null);
+
+Insert into NodeResources values('56', 'input',  30, '29', '22', null, null);
+Insert into NodeResources values('57', 'input',  3, '6', '22', null, null);
+Insert into NodeResources values('58', 'input',  3, '27', '22', null, null);
+Insert into NodeResources values('59', 'input',  1, null, '22', null, '20');
+Insert into NodeResources values('60', 'output',  1, '33', '22', null, null);
+
+Insert into NodeResources values('61', 'input',  800, '20', '23', null, null);
+Insert into NodeResources values('62', 'output',  800, '30', '23', null, null);
+
+Insert into NodeResources values('63', 'input',  800, '30', '24', null, null);
+Insert into NodeResources values('64', 'input',  3, '23', '24', null, null);
+Insert into NodeResources values('72', 'input',  3, '22', '24', null, null);
+Insert into NodeResources values('65', 'output',  800, '31', '24', null, null);
+
+Insert into NodeResources values('66', 'input',  800, '31', '25', null, null);
+Insert into NodeResources values('67', 'input',  1, '21', '25', null, null);
+Insert into NodeResources values('68', 'output',  800, '32', '25', null, null);
+
+Insert into NodeResources values('69', 'input',  800, '32', '26', null, null);
+Insert into NodeResources values('70', 'input',  300, '33', '26', null, null);
+
