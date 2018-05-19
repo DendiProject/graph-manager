@@ -193,7 +193,8 @@ public class NodeServiceImpl implements NodeService{
                             }
                         }                
                     }            
-                }        
+                }   
+                graph.setIsParallel(version.isIsParalell());
                 return graph;
             }
         }   

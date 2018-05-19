@@ -21,12 +21,23 @@ public class GraphDto {
     private List<NodeDto> nodes;
     private Set<EdgeDto> edges;
     private String receipeName;
+    private boolean isParallel;
+     
+     
 
     public GraphDto() {
         this.edges=new HashSet<>();
         this.nodes=new ArrayList<>();
         this.resources=new ArrayList<>();
         this.indredients=new ArrayList<>();
+    }
+
+    public boolean isIsParallel() {
+        return isParallel;
+    }
+
+    public void setIsParallel(boolean isParallel) {
+        this.isParallel = isParallel;
     }
 
     
