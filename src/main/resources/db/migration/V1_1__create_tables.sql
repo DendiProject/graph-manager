@@ -108,6 +108,8 @@ WITH (
 
 create table Sessions ( 
 session_id varchar(255),
+inviter_id  varchar(255), 
+receipe_id  varchar(255),
 CONSTRAINT session_pkey PRIMARY KEY (session_id)
 )
 WITH (

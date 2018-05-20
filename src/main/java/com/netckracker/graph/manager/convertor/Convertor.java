@@ -105,7 +105,7 @@ public class Convertor {
         return resourceDto;
     }
     
-    public UserStepDto convertNodeToUserStepDto(Node node)
+    public UserStepDto convertNodeToUserStepDto(Node node, boolean isStarted, String inviter)
     {
         List<NodeResources> resources=nodeResourcesRepository.findByIngredients("resource", node.getNodeId());
         List<NodeResources> ingredients=nodeResourcesRepository.findByIngredients("ingredient", node.getNodeId());
@@ -119,13 +119,8 @@ public class Convertor {
         userStep.setIndredients(ingredients.stream()
                .map(resource->convertNodeResourceToDto(resource))
                .collect(Collectors.toList()));
+        userStep.setInviterId(inviter);
+        userStep.setIsStarted(isStarted);
         return userStep;
     }
-    
- /*   public CatalogDto convertCatalogToDto(Catalog catalog)
-    {
-        TagsDto tagsDto=modelMapper.map(tag, TagsDto.class);
-        return tagsDto;
-    }*/
-
 }

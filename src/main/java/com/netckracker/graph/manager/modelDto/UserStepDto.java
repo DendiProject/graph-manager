@@ -13,11 +13,29 @@ import java.util.List;
  */
 public class UserStepDto {
     private List<ResourceDto> resources;
-    private List<ResourceDto> indredients;
-    
+    private List<ResourceDto> indredients;    
     private String nodeId;
     private String description;
     private String pictureId;
+    private String inviterId;
+    private boolean isStarted;
+
+    public String getInviterId() {
+        return inviterId;
+    }
+
+    public void setInviterId(String inviterId) {
+        this.inviterId = inviterId;
+    }
+
+    public boolean isIsStarted() {
+        return isStarted;
+    }
+
+    public void setIsStarted(boolean isStarted) {
+        this.isStarted = isStarted;
+    }    
+    
 
     public List<ResourceDto> getResources() {
         return resources;

@@ -384,7 +384,7 @@ public class ReceipePassageControllerTest {
         System.out.println("STATUS CODE");
         System.out.println(out.getStatusCode());
         /////////////////////////////////////////////////
-        String uri2 = getAbsoluteUrl() + "/receipepassage/checkinvite?userId="+userId1;
+     /*   String uri2 = getAbsoluteUrl() + "/receipepassage/checkinvite?userId="+userId1;
         HttpEntity<?> requestEntity2 = new HttpEntity<>(headers);         
         ResponseEntity<?> out2 = testRestTemplate.exchange(uri2, HttpMethod.GET, requestEntity2, String.class);
         
@@ -512,7 +512,7 @@ public class ReceipePassageControllerTest {
         
         //////////////////////////////////////////////////////////////////////
         
-        
+        */
         
         
         

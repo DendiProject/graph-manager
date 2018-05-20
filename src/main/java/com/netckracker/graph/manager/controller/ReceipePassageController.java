@@ -6,6 +6,7 @@
 package com.netckracker.graph.manager.controller;
 
 import com.netckracker.graph.manager.model.Node;
+import com.netckracker.graph.manager.modelDto.InviteInformationDto;
 import com.netckracker.graph.manager.modelDto.UserStepDto;
 import com.netckracker.graph.manager.service.NodeService;
 import com.netckracker.graph.manager.service.ReceipePassageService;
@@ -52,12 +53,18 @@ public class ReceipePassageController {
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> userStart(@RequestParam String userId){
         
-            List<UserStepDto> userStep=passageService.getFirstStep(userId);
+           /* List<UserStepDto> userStep=passageService.getFirstStep(userId);
             if (userStep.isEmpty())
             {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);    
             }
-            else return new ResponseEntity<>(userStep, HttpStatus.OK);  
+            else return new ResponseEntity<>(userStep, HttpStatus.OK);  */
+           List<InviteInformationDto> invites=passageService.checkInvite(userId);
+           if (invites.isEmpty())
+            {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);    
+            }
+           else return new ResponseEntity<>(invites, HttpStatus.OK);
     }
     
     @RequestMapping(value = "/receipepassage/getnextstep", method = RequestMethod.GET, 
@@ -95,7 +102,7 @@ public class ReceipePassageController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);     
     }
     
-    @RequestMapping(value = "/receipepassage/getnotcompletedstep", method = RequestMethod.GET, 
+  /*  @RequestMapping(value = "/receipepassage/getnotcompletedstep", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> getNotCompletedStep (@RequestParam String sessionId, @RequestParam String userId)
     {
@@ -116,7 +123,17 @@ public class ReceipePassageController {
             }
         }
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);         
+    }*/
+    
+    /*    @RequestMapping(value = "/receipepassage/setstarted", method = RequestMethod.POST, 
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
+    public ResponseEntity<?> setStepStarted (@RequestParam String sessionId, @RequestParam String userId,@RequestParam String nodeId )
+    {
+        passageService.setStepStarted(sessionId, userId, nodeId);
+        return new ResponseEntity<>(HttpStatus.OK);    
     }
+    */
+    
     
     @RequestMapping(value = "/receipepassage/getpassinggraph", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")

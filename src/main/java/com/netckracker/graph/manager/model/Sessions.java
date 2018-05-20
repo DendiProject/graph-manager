@@ -21,6 +21,30 @@ public class Sessions implements Serializable{
     @Id   
     @Column(name = "session_id")     
     private String sessionId;
+      
+    @Column(name = "inviter_id")     
+    private String inviterId;
+    
+    @Column(name = "receipe_id")     
+    private String receipeId;
+
+    public String getReceipeId() {
+        return receipeId;
+    }
+
+    public void setReceipeId(String receipeId) {
+        this.receipeId = receipeId;
+    }
+    
+
+    public String getInviterId() {
+        return inviterId;
+    }
+
+    public void setInviterId(String inviterId) {
+        this.inviterId = inviterId;
+    }   
+    
 
     public String getSessionId() {
         return sessionId;

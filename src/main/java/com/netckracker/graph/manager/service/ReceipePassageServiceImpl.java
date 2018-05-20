@@ -12,6 +12,7 @@ import com.netckracker.graph.manager.model.Receipe;
 import com.netckracker.graph.manager.model.ReceipeVersion;
 import com.netckracker.graph.manager.model.Sessions;
 import com.netckracker.graph.manager.model.UserStep;
+import com.netckracker.graph.manager.modelDto.InviteInformationDto;
 import com.netckracker.graph.manager.modelDto.UserStepDto;
 import com.netckracker.graph.manager.repository.InviteUsersRepository;
 import com.netckracker.graph.manager.repository.NodeRepository;
@@ -66,20 +67,27 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
             List<Node> firstNodes=nodeRepository.findFirst(version.getVersionId());
             for (int i=0;i<firstNodes.size();i++)
             {
+                UserStep startedUserStep=getNotCompletedStep(session.getSessionId(),userId);
+                if (startedUserStep!=null)
+                {                   
+                    stepsDto.add(convertor.convertNodeToUserStepDto(startedUserStep.getNode(),startedUserStep.isIsStarted(), session.getInviterId()));  
+                    findedStep=true;
+                    break;                    
+                }
                 UserStep userStep=userStepRepository.findByNodeAndSessionAndIsCompletedAndIsStarted(firstNodes.get(i), session, false, false);                
                 if (userStep!=null)
                 {                    
-                    userStep.setIsStarted(true);
+                    //userStep.setIsStarted(true);
                     userStep.setUserId(userId);
                     userStepRepository.saveAndFlush(userStep);
-                    stepsDto.add(convertor.convertNodeToUserStepDto(userStep.getNode()));  
+                    stepsDto.add(convertor.convertNodeToUserStepDto(userStep.getNode(),userStep.isIsStarted(), session.getInviterId()));  
                     findedStep=true;
                     break;
                 }
             }
             if (findedStep==false)
             {
-                stepsDto.add(convertor.convertNodeToUserStepDto(nodeService.getDefaultNode()));
+                stepsDto.add(convertor.convertNodeToUserStepDto(nodeService.getDefaultNode(), false, session.getInviterId()));
             }                                   
         }
         return stepsDto;
@@ -96,7 +104,7 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
                Node node=getFreeStep(session, userId);
                if (node!=null)
                {
-                   return convertor.convertNodeToUserStepDto(node);
+                   return convertor.convertNodeToUserStepDto(node, true, session.getInviterId());
                }
             }
             else 
@@ -119,24 +127,24 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
                                 nextStep.setIsStarted(true);
                                 nextStep.setUserId(userId);
                                 UserStep savedStep=userStepRepository.save(nextStep);                                                            
-                                return convertor.convertNodeToUserStepDto(savedStep.getNode());  
+                                return convertor.convertNodeToUserStepDto(savedStep.getNode(), true, session.getInviterId());  
                             }
                         }
                     }  
                     Node node=getFreeStep(session, userId);
                     if (node!=null)
                     {
-                        return convertor.convertNodeToUserStepDto(node);
+                        return convertor.convertNodeToUserStepDto(node, true, session.getInviterId());
                     }                      
                 }
                 Node node=getFreeStep(session, userId);
                 if (node!=null)
                 {
-                    return convertor.convertNodeToUserStepDto(node);
+                    return convertor.convertNodeToUserStepDto(node, true, session.getInviterId());
                 } 
             }   
             Node defaultNode=nodeService.getDefaultNode();
-            return convertor.convertNodeToUserStepDto(defaultNode);
+            return convertor.convertNodeToUserStepDto(defaultNode, true, session.getInviterId());
         }
         else return null;        
     }  
@@ -154,6 +162,8 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
         List<Node> nodes=nodeRepository.findByVersion(version);
         Sessions session=new Sessions();
         session.setSessionId(sessionId);
+        session.setInviterId(ownerUserId);
+        session.setReceipeId(receipeId);
         Sessions saved=sessionsRepository.saveAndFlush(session);
         for (int i=0; i<nodes.size();i++)
         {
@@ -260,16 +270,51 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
     }
 
     @Override
-    public UserStepDto getNotCompletedStep(String sessionId, String userId) {
+    public UserStep getNotCompletedStep(String sessionId, String userId) {
         Sessions session=sessionsRepository.findBySessionId(sessionId);
         if (session!=null)
         {
             UserStep userStep=userStepRepository.findByUserIdAndSessionAndIsCompletedAndIsStarted(userId, session, false, true);
             if (userStep!=null)
             {
-                return convertor.convertNodeToUserStepDto(userStep.getNode());
+                return userStep;
             }
         }
-        return convertor.convertNodeToUserStepDto(nodeService.getDefaultNode());
+        return null;
+        //return convertor.convertNodeToUserStepDto(nodeService.getDefaultNode());
+    }
+
+    @Override
+    @Transactional
+    public void setStepStarted(String sessionId, String userId, String nodeId) {
+        Sessions session=sessionsRepository.findBySessionId(sessionId);
+        if (session!=null)
+        {
+            UserStep userStep=userStepRepository.findByUserIdAndSessionAndIsCompletedAndIsStarted(userId, session, false, false);
+                if (userStep!=null)
+                {
+                    userStep.setIsStarted(true);
+                    userStepRepository.save(userStep);
+                }
+        }
+    }
+
+    @Override
+    public List<InviteInformationDto>  checkInvite(String userId) {
+        List<InvitedUsers> users=usersRepository.findByUserId(userId);
+        List<InviteInformationDto> inviters=new ArrayList<>();
+        for (int j=0; j<users.size();j++)
+        {
+          InviteInformationDto invite=new InviteInformationDto();
+          Receipe receipe=receipeRepository.findByReceipeId(users.get(j).getSession().getReceipeId());
+          if (receipe!=null)
+          {
+              invite.setReceipeInformation(convertor.convertReceipeToReceipeInformationDto(receipe));
+          }
+          invite.setSessionId(users.get(j).getSession().getSessionId());
+          invite.setInviterId(users.get(j).getSession().getInviterId());
+          inviters.add(invite);          
+        }
+        return inviters;
     }
 }
