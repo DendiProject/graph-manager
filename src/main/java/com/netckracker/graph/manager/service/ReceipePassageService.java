@@ -25,7 +25,7 @@ public interface ReceipePassageService {
     //public UserStepDto getFreeStep (String sessionId, String receipeId, String userId);
     public void completeReceipe(String sessionId, String userId);
     public Map<String, Boolean> getAllGraph(String sessionId);
-    public UserStep getNotCompletedStep(String sessionId, String userId);
+    public UserStepDto getNotCompletedStep(String sessionId, String userId);
     public void setStepStarted(String sessionId, String userId, String nodeId);
     
 }

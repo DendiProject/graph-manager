@@ -67,13 +67,13 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
             List<Node> firstNodes=nodeRepository.findFirst(version.getVersionId());
             for (int i=0;i<firstNodes.size();i++)
             {
-                UserStep startedUserStep=getNotCompletedStep(session.getSessionId(),userId);
+            /*    UserStep startedUserStep=getNotCompletedStep(session.getSessionId(),userId);
                 if (startedUserStep!=null)
                 {                   
                     stepsDto.add(convertor.convertNodeToUserStepDto(startedUserStep.getNode(),startedUserStep.isIsStarted(), session.getInviterId()));  
                     findedStep=true;
                     break;                    
-                }
+                }*/
                 UserStep userStep=userStepRepository.findByNodeAndSessionAndIsCompletedAndIsStarted(firstNodes.get(i), session, false, false);                
                 if (userStep!=null)
                 {                    
@@ -270,14 +270,14 @@ public class ReceipePassageServiceImpl implements ReceipePassageService{
     }
 
     @Override
-    public UserStep getNotCompletedStep(String sessionId, String userId) {
+    public UserStepDto getNotCompletedStep(String sessionId, String userId) {
         Sessions session=sessionsRepository.findBySessionId(sessionId);
         if (session!=null)
         {
             UserStep userStep=userStepRepository.findByUserIdAndSessionAndIsCompletedAndIsStarted(userId, session, false, true);
             if (userStep!=null)
             {
-                return userStep;
+                return convertor.convertNodeToUserStepDto(userStep.getNode(),userStep.isIsStarted(), session.getInviterId());
             }
         }
         return null;

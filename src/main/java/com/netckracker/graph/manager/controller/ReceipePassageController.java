@@ -102,7 +102,7 @@ public class ReceipePassageController {
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);     
     }
     
-  /*  @RequestMapping(value = "/receipepassage/getnotcompletedstep", method = RequestMethod.GET, 
+    @RequestMapping(value = "/receipepassage/getnotcompletedstep", method = RequestMethod.GET, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
     public ResponseEntity<?> getNotCompletedStep (@RequestParam String sessionId, @RequestParam String userId)
     {
@@ -123,7 +123,7 @@ public class ReceipePassageController {
             }
         }
         else return new ResponseEntity<>(HttpStatus.NOT_FOUND);         
-    }*/
+    }
     
     /*    @RequestMapping(value = "/receipepassage/setstarted", method = RequestMethod.POST, 
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE, headers = "Accept=application/json")
